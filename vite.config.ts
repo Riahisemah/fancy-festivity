@@ -11,4 +11,8 @@ export default defineConfig({
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     server: { entry: "server" },
   },
+  nitro: {
+    // Skip nf3/@vercel/nft tracing (CJS/ESM import fails on Netlify). prebuild creates .netlify/functions-internal/server.
+    noExternals: true,
+  },
 });
