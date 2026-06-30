@@ -12,7 +12,7 @@ export default defineConfig({
     server: { entry: "server" },
   },
   nitro: {
-    // Skip nf3/@vercel/nft tracing (CJS/ESM import fails on Netlify). prebuild creates .netlify/functions-internal/server.
+    // Bundle deps for Netlify (nft tracing fails on @vercel/nft CJS). prebuild creates .netlify/functions-internal/server.
     noExternals: true,
   },
 });

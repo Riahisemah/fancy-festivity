@@ -25,6 +25,7 @@ import { SectionRenderer } from "@/components/sections/SectionRenderer";
 import { getInvitationById, patchInvitation, type Invitation } from "@/lib/invitations";
 
 export const Route = createFileRoute("/_authenticated/editor/$id")({
+  ssr: false,
   head: () => ({ meta: [{ title: "Éditeur — Vélon" }] }),
   component: EditorPage,
 });

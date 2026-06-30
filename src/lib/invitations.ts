@@ -1,5 +1,5 @@
 // Service Supabase pour les invitations (RSVP supprimé).
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabase } from "@/integrations/supabase/get-client";
 import type { Tables, Json } from "@/integrations/supabase/types";
 import type { ThemeKey } from "./themes";
 import type { Section } from "./sections";
@@ -67,6 +67,7 @@ function mapInvitation(row: InvitationRow): Invitation {
 }
 
 export async function listInvitationsByUser(userId: string): Promise<Invitation[]> {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("invitations")
     .select("*")
@@ -77,18 +78,21 @@ export async function listInvitationsByUser(userId: string): Promise<Invitation[
 }
 
 export async function getInvitationById(id: string): Promise<Invitation | null> {
+  const supabase = await getSupabase();
   const { data, error } = await supabase.from("invitations").select("*").eq("id", id).maybeSingle();
   if (error) throw error;
   return data ? mapInvitation(data) : null;
 }
 
 export async function getInvitationBySlug(slug: string): Promise<Invitation | null> {
+  const supabase = await getSupabase();
   const { data, error } = await supabase.from("invitations").select("*").eq("slug", slug).maybeSingle();
   if (error) throw error;
   return data ? mapInvitation(data) : null;
 }
 
 export async function createInvitation(userId: string, input: InvitationCreateInput): Promise<Invitation> {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("invitations")
     .insert({
@@ -108,6 +112,7 @@ export async function createInvitation(userId: string, input: InvitationCreateIn
 }
 
 export async function patchInvitation(id: string, patch: InvitationPatch): Promise<void> {
+  const supabase = await getSupabase();
   const update: Record<string, unknown> = { ...patch };
   if (patch.sections) update.sections = patch.sections as unknown as Json;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,12 +121,14 @@ export async function patchInvitation(id: string, patch: InvitationPatch): Promi
 }
 
 export async function deleteInvitation(id: string): Promise<void> {
+  const supabase = await getSupabase();
   const { error } = await supabase.from("invitations").delete().eq("id", id);
   if (error) throw error;
 }
 
 export async function incrementViews(slug: string): Promise<void> {
   try {
+    const supabase = await getSupabase();
     await supabase.rpc("increment_invitation_views", { invitation_slug: slug });
   } catch {
     // non bloquant
@@ -129,6 +136,7 @@ export async function incrementViews(slug: string): Promise<void> {
 }
 
 export async function uploadInvitationImage(userId: string, file: File): Promise<string> {
+  const supabase = await getSupabase();
   const path = `${userId}/${Date.now()}-${file.name}`;
   const { error: uploadError } = await supabase.storage.from("invitations").upload(path, file);
   if (uploadError) throw uploadError;
