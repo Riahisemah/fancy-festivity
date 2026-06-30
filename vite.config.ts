@@ -12,4 +12,8 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  nitro: {
+    // Bundle server deps instead of nf3/@vercel/nft tracing (avoids Node 22 CJS/ESM build failure on Netlify).
+    noExternals: true,
+  },
 });
