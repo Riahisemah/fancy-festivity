@@ -14,6 +14,7 @@ import {
 } from "@/lib/invitations";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
+  ssr: false,
   head: () => ({ meta: [{ title: "Dashboard — Vélon" }] }),
   component: Dashboard,
 });
