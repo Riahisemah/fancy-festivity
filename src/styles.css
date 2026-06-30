@@ -1,0 +1,138 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =========================
+   Vélon — Luxe Editorial design system
+   Paper, ink, gold. Serif display + sans body.
+   ========================= */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+
+  --font-serif: var(--font-serif-family);
+  --font-sans: var(--font-sans-family);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-gold: var(--gold);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  --font-serif-family: "Playfair Display", ui-serif, Georgia, serif;
+  --font-sans-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand */
+  --paper: oklch(0.987 0.005 80);
+  --ink: oklch(0.18 0.01 60);
+  --gold: oklch(0.65 0.08 70);
+
+  --background: oklch(0.987 0.005 80);
+  --foreground: oklch(0.18 0.01 60);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.01 60);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.01 60);
+  --primary: oklch(0.18 0.01 60);
+  --primary-foreground: oklch(0.987 0.005 80);
+  --secondary: oklch(0.95 0.012 75);
+  --secondary-foreground: oklch(0.18 0.01 60);
+  --muted: oklch(0.95 0.012 75);
+  --muted-foreground: oklch(0.48 0.015 65);
+  --accent: oklch(0.65 0.08 70);
+  --accent-foreground: oklch(0.987 0.005 80);
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(0.987 0.005 80);
+  --border: oklch(0.18 0.01 60 / 0.08);
+  --input: oklch(0.18 0.01 60 / 0.1);
+  --ring: oklch(0.65 0.08 70);
+}
+
+.dark {
+  --paper: oklch(0.18 0.01 60);
+  --ink: oklch(0.987 0.005 80);
+  --background: oklch(0.16 0.008 60);
+  --foreground: oklch(0.97 0.005 80);
+  --card: oklch(0.21 0.01 60);
+  --card-foreground: oklch(0.97 0.005 80);
+  --popover: oklch(0.21 0.01 60);
+  --popover-foreground: oklch(0.97 0.005 80);
+  --primary: oklch(0.97 0.005 80);
+  --primary-foreground: oklch(0.18 0.01 60);
+  --secondary: oklch(0.26 0.01 60);
+  --secondary-foreground: oklch(0.97 0.005 80);
+  --muted: oklch(0.26 0.01 60);
+  --muted-foreground: oklch(0.7 0.012 70);
+  --accent: oklch(0.7 0.09 70);
+  --accent-foreground: oklch(0.18 0.01 60);
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.97 0.005 80);
+  --border: oklch(1 0 0 / 0.08);
+  --input: oklch(1 0 0 / 0.12);
+  --ring: oklch(0.7 0.09 70);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html, body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  .font-serif { font-family: var(--font-serif); }
+  .font-sans { font-family: var(--font-sans); }
+}
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes line-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@utility animate-reveal {
+  animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@utility animate-line {
+  animation: line-grow 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: left;
+}
+@utility animate-fade {
+  animation: fade-in 0.6s ease-out both;
+}

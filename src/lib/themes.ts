@@ -1,0 +1,479 @@
+export type ThemeKey = "wedding" | "birthday" | "business" | "minimal" | "graduation" | "luxury";
+
+export type ThemeConfig = {
+  label: string;
+  emoji: string;
+  description: string;
+  pageBg: string;
+  pageText: string;
+  surface: string;
+  border: string;
+  accent: string;
+  accentBg: string;
+  font: string;
+  headingFont: string;
+  overlay?: string;
+  decor: "petals" | "balloons" | "grid" | "stars" | "particles" | "none";
+  ctaClass: string;
+};
+
+export type SubthemeConfig = {
+  key: string;
+  label: string;
+  emoji: string;
+  tagline: string;
+  swatches: string[]; // for preview chips
+  overrides: Partial<ThemeConfig>;
+};
+
+export const THEMES: Record<ThemeKey, ThemeConfig> = {
+  wedding: {
+    label: "Mariage",
+    emoji: "💍",
+    description: "Luxe romantique",
+    pageBg: "bg-[#faf5ee]",
+    pageText: "text-[#2a1f17]",
+    surface: "bg-white/60 backdrop-blur-xl",
+    border: "border-[#c9a86a]/30",
+    accent: "text-[#a8884a]",
+    accentBg: "bg-[#a8884a]",
+    font: "font-serif",
+    headingFont: "font-serif italic",
+    overlay:
+      "radial-gradient(60% 40% at 20% 10%, rgba(201,168,106,0.25), transparent 60%), radial-gradient(50% 40% at 80% 90%, rgba(255,200,200,0.25), transparent 60%)",
+    decor: "petals",
+    ctaClass:
+      "bg-gradient-to-r from-[#a8884a] to-[#d4b574] text-white shadow-lg shadow-[#a8884a]/30 hover:shadow-xl hover:shadow-[#a8884a]/40",
+  },
+  birthday: {
+    label: "Anniversaire",
+    emoji: "🎂",
+    description: "Fun et festif",
+    pageBg: "bg-gradient-to-br from-[#ff6ec7] via-[#a855f7] to-[#3b82f6]",
+    pageText: "text-white",
+    surface: "bg-white/15 backdrop-blur-xl",
+    border: "border-white/30",
+    accent: "text-yellow-200",
+    accentBg: "bg-yellow-300",
+    font: "font-sans",
+    headingFont: "font-sans font-bold",
+    decor: "balloons",
+    ctaClass:
+      "bg-white text-[#a855f7] shadow-xl shadow-purple-900/30 hover:scale-105",
+  },
+  business: {
+    label: "Business",
+    emoji: "💼",
+    description: "Corporate premium",
+    pageBg: "bg-[#0a0f1c]",
+    pageText: "text-slate-100",
+    surface: "bg-white/[0.04] backdrop-blur-xl",
+    border: "border-white/10",
+    accent: "text-blue-400",
+    accentBg: "bg-blue-500",
+    font: "font-sans",
+    headingFont: "font-sans font-semibold tracking-tight",
+    overlay:
+      "radial-gradient(50% 50% at 50% 0%, rgba(59,130,246,0.15), transparent 60%)",
+    decor: "grid",
+    ctaClass: "bg-blue-500 text-white hover:bg-blue-400 shadow-lg shadow-blue-500/30",
+  },
+  minimal: {
+    label: "Minimal",
+    emoji: "✨",
+    description: "Espace blanc, pur",
+    pageBg: "bg-white",
+    pageText: "text-neutral-900",
+    surface: "bg-neutral-50",
+    border: "border-neutral-200",
+    accent: "text-neutral-500",
+    accentBg: "bg-neutral-900",
+    font: "font-sans",
+    headingFont: "font-serif",
+    decor: "none",
+    ctaClass: "bg-neutral-900 text-white hover:bg-neutral-700",
+  },
+  graduation: {
+    label: "Graduation",
+    emoji: "🎓",
+    description: "Académique inspirant",
+    pageBg: "bg-gradient-to-br from-[#1e1b3a] via-[#2d1b4e] to-[#0f1830]",
+    pageText: "text-amber-50",
+    surface: "bg-white/[0.06] backdrop-blur-xl",
+    border: "border-amber-300/20",
+    accent: "text-amber-300",
+    accentBg: "bg-amber-400",
+    font: "font-serif",
+    headingFont: "font-serif",
+    overlay: "radial-gradient(40% 60% at 50% 0%, rgba(251,191,36,0.18), transparent 70%)",
+    decor: "stars",
+    ctaClass:
+      "bg-gradient-to-r from-amber-400 to-amber-200 text-[#1e1b3a] font-semibold shadow-lg shadow-amber-500/30",
+  },
+  luxury: {
+    label: "Luxury VIP",
+    emoji: "🌙",
+    description: "Ultra premium",
+    pageBg: "bg-black",
+    pageText: "text-[#f5e9c8]",
+    surface: "bg-white/[0.04] backdrop-blur-2xl",
+    border: "border-[#d4af37]/25",
+    accent: "text-[#d4af37]",
+    accentBg: "bg-[#d4af37]",
+    font: "font-serif",
+    headingFont: "font-serif tracking-tight",
+    overlay:
+      "radial-gradient(60% 50% at 50% 0%, rgba(212,175,55,0.15), transparent 70%), radial-gradient(40% 40% at 50% 100%, rgba(212,175,55,0.08), transparent 70%)",
+    decor: "particles",
+    ctaClass:
+      "bg-gradient-to-r from-[#d4af37] via-[#f4d77a] to-[#d4af37] text-black font-medium shadow-2xl shadow-[#d4af37]/30 hover:shadow-[#d4af37]/50",
+  },
+};
+
+export const SUBTHEMES: Record<ThemeKey, SubthemeConfig[]> = {
+  wedding: [
+    {
+      key: "luxury-gold",
+      label: "Luxury Gold",
+      emoji: "💎",
+      tagline: "Or, blanc & floral royal",
+      swatches: ["#faf5ee", "#d4b574", "#a8884a", "#fff"],
+      overrides: {},
+    },
+    {
+      key: "romantic-garden",
+      label: "Romantic Garden",
+      emoji: "🌸",
+      tagline: "Pétales, douceur, nature",
+      swatches: ["#fdf2f6", "#f4c2c2", "#9ca77a", "#fff"],
+      overrides: {
+        pageBg: "bg-[#fdf2f6]",
+        pageText: "text-[#3a2a30]",
+        accent: "text-[#c97b8a]",
+        accentBg: "bg-[#c97b8a]",
+        border: "border-[#c97b8a]/30",
+        overlay:
+          "radial-gradient(60% 40% at 20% 10%, rgba(244,194,194,0.45), transparent 60%), radial-gradient(50% 40% at 80% 90%, rgba(156,167,122,0.25), transparent 60%)",
+        ctaClass:
+          "bg-gradient-to-r from-[#c97b8a] to-[#e8a7b3] text-white shadow-lg shadow-pink-400/30",
+      },
+    },
+    {
+      key: "dark-elegant",
+      label: "Dark Elegant",
+      emoji: "🕯️",
+      tagline: "Noir, doré, candle light",
+      swatches: ["#0e0a08", "#d4af37", "#3a2c1f", "#f5e9c8"],
+      overrides: {
+        pageBg: "bg-[#0e0a08]",
+        pageText: "text-[#f5e9c8]",
+        surface: "bg-white/[0.05] backdrop-blur-xl",
+        border: "border-[#d4af37]/25",
+        accent: "text-[#d4af37]",
+        accentBg: "bg-[#d4af37]",
+        overlay:
+          "radial-gradient(50% 40% at 50% 0%, rgba(212,175,55,0.2), transparent 70%), radial-gradient(40% 60% at 50% 100%, rgba(255,140,80,0.08), transparent 70%)",
+        decor: "particles",
+        ctaClass:
+          "bg-gradient-to-r from-[#d4af37] to-[#f4d77a] text-black font-medium shadow-xl shadow-[#d4af37]/30",
+      },
+    },
+    {
+      key: "beach",
+      label: "Beach Wedding",
+      emoji: "🏝️",
+      tagline: "Sable, océan, ambiance été",
+      swatches: ["#eaf4f7", "#5aa8c2", "#e8d8a8", "#fff"],
+      overrides: {
+        pageBg: "bg-gradient-to-b from-[#eaf4f7] via-[#f7eed8] to-[#fff8e7]",
+        pageText: "text-[#1d3a48]",
+        accent: "text-[#3d8aa3]",
+        accentBg: "bg-[#3d8aa3]",
+        border: "border-[#3d8aa3]/25",
+        font: "font-sans",
+        headingFont: "font-serif",
+        overlay:
+          "radial-gradient(60% 50% at 50% 10%, rgba(90,168,194,0.18), transparent 70%)",
+        decor: "particles",
+        ctaClass:
+          "bg-gradient-to-r from-[#3d8aa3] to-[#7bbcd1] text-white shadow-lg shadow-sky-500/30",
+      },
+    },
+  ],
+  birthday: [
+    {
+      key: "party-neon",
+      label: "Party Neon",
+      emoji: "🎉",
+      tagline: "Glow vif, confetti intense",
+      swatches: ["#0a0014", "#ff2bd6", "#00f0ff", "#fffb00"],
+      overrides: {
+        pageBg: "bg-[#0a0014]",
+        pageText: "text-white",
+        accent: "text-[#ff2bd6]",
+        accentBg: "bg-[#ff2bd6]",
+        border: "border-[#ff2bd6]/30",
+        overlay:
+          "radial-gradient(40% 30% at 20% 10%, rgba(255,43,214,0.35), transparent 60%), radial-gradient(40% 30% at 80% 80%, rgba(0,240,255,0.25), transparent 60%)",
+        decor: "particles",
+        ctaClass:
+          "bg-gradient-to-r from-[#ff2bd6] via-[#a855f7] to-[#00f0ff] text-white shadow-2xl shadow-fuchsia-500/50",
+      },
+    },
+    {
+      key: "cute-pastel",
+      label: "Cute Pastel",
+      emoji: "🎈",
+      tagline: "Rose pastel, kawaii",
+      swatches: ["#fff0f7", "#ffc8dd", "#bde0fe", "#a2d2ff"],
+      overrides: {
+        pageBg: "bg-gradient-to-br from-[#fff0f7] via-[#ffe5ec] to-[#e7f0ff]",
+        pageText: "text-[#5b3d4d]",
+        accent: "text-[#e879a8]",
+        accentBg: "bg-[#ffb3c6]",
+        border: "border-[#ffb3c6]/40",
+        decor: "balloons",
+        ctaClass: "bg-[#ffb3c6] text-[#5b3d4d] shadow-lg shadow-pink-300/40",
+      },
+    },
+    {
+      key: "luxury-birthday",
+      label: "Luxury Birthday",
+      emoji: "🖤",
+      tagline: "Noir & or, très premium",
+      swatches: ["#000", "#d4af37", "#1a1a1a", "#f5e9c8"],
+      overrides: {
+        pageBg: "bg-black",
+        pageText: "text-[#f5e9c8]",
+        accent: "text-[#d4af37]",
+        accentBg: "bg-[#d4af37]",
+        border: "border-[#d4af37]/25",
+        font: "font-serif",
+        headingFont: "font-serif tracking-tight",
+        decor: "particles",
+        overlay:
+          "radial-gradient(60% 50% at 50% 0%, rgba(212,175,55,0.18), transparent 70%)",
+        ctaClass:
+          "bg-gradient-to-r from-[#d4af37] to-[#f4d77a] text-black shadow-2xl shadow-[#d4af37]/40",
+      },
+    },
+    {
+      key: "fun-retro",
+      label: "Fun Retro",
+      emoji: "🕹️",
+      tagline: "Arcade, pixel vibes",
+      swatches: ["#1a103d", "#ff6b9d", "#feca57", "#48dbfb"],
+      overrides: {
+        pageBg: "bg-gradient-to-br from-[#1a103d] via-[#3d1a5b] to-[#0d1b3d]",
+        pageText: "text-[#feca57]",
+        accent: "text-[#ff6b9d]",
+        accentBg: "bg-[#ff6b9d]",
+        border: "border-[#feca57]/30",
+        font: "font-mono",
+        headingFont: "font-mono font-bold uppercase tracking-wider",
+        decor: "grid",
+        overlay:
+          "radial-gradient(40% 40% at 30% 20%, rgba(255,107,157,0.25), transparent 60%), radial-gradient(40% 40% at 70% 80%, rgba(72,219,251,0.2), transparent 60%)",
+        ctaClass:
+          "bg-[#feca57] text-[#1a103d] font-bold uppercase tracking-wider shadow-lg shadow-yellow-400/40",
+      },
+    },
+  ],
+  minimal: [
+    {
+      key: "pure-white",
+      label: "Pure White",
+      emoji: "✨",
+      tagline: "Espace blanc, typographie pure",
+      swatches: ["#fff", "#0a0a0a", "#737373", "#e5e5e5"],
+      overrides: {},
+    },
+    {
+      key: "soft-cream",
+      label: "Soft Cream",
+      emoji: "🤎",
+      tagline: "Ivoire chaleureux, encre",
+      swatches: ["#f8f4ec", "#2a1f17", "#a8884a", "#e8dfcc"],
+      overrides: {
+        pageBg: "bg-[#f8f4ec]",
+        pageText: "text-[#2a1f17]",
+        surface: "bg-white/70",
+        border: "border-[#2a1f17]/15",
+        accent: "text-[#a8884a]",
+        accentBg: "bg-[#2a1f17]",
+      },
+    },
+    {
+      key: "mono-dark",
+      label: "Mono Dark",
+      emoji: "◼️",
+      tagline: "Noir mat, contraste pur",
+      swatches: ["#0a0a0a", "#fff", "#737373", "#262626"],
+      overrides: {
+        pageBg: "bg-[#0a0a0a]",
+        pageText: "text-neutral-100",
+        surface: "bg-white/[0.04]",
+        border: "border-white/10",
+        accent: "text-neutral-400",
+        accentBg: "bg-white",
+        ctaClass: "bg-white text-black hover:bg-neutral-200",
+      },
+    },
+  ],
+
+  business: [
+    {
+      key: "startup-modern",
+      label: "Startup Modern",
+      emoji: "📊",
+      tagline: "SaaS minimal, bleu tech",
+      swatches: ["#0a0f1c", "#3b82f6", "#1e293b", "#fff"],
+      overrides: {},
+    },
+    {
+      key: "executive",
+      label: "Executive Corporate",
+      emoji: "🏢",
+      tagline: "Sobre, blanc & bleu nuit",
+      swatches: ["#f5f6f8", "#1e2a4a", "#94a3b8", "#fff"],
+      overrides: {
+        pageBg: "bg-[#f5f6f8]",
+        pageText: "text-[#1e2a4a]",
+        surface: "bg-white",
+        border: "border-[#1e2a4a]/15",
+        accent: "text-[#1e2a4a]",
+        accentBg: "bg-[#1e2a4a]",
+        overlay: undefined,
+        decor: "none",
+        ctaClass: "bg-[#1e2a4a] text-white hover:bg-[#2a3a60]",
+      },
+    },
+    {
+      key: "tech-futuristic",
+      label: "Tech Futuristic",
+      emoji: "🚀",
+      tagline: "Gradients glow, UI futuriste",
+      swatches: ["#020617", "#06b6d4", "#a855f7", "#22d3ee"],
+      overrides: {
+        pageBg: "bg-[#020617]",
+        pageText: "text-cyan-100",
+        accent: "text-cyan-300",
+        accentBg: "bg-cyan-400",
+        border: "border-cyan-400/25",
+        overlay:
+          "radial-gradient(40% 40% at 20% 10%, rgba(6,182,212,0.25), transparent 60%), radial-gradient(40% 40% at 80% 90%, rgba(168,85,247,0.25), transparent 60%)",
+        decor: "grid",
+        ctaClass:
+          "bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 text-white shadow-2xl shadow-cyan-500/40",
+      },
+    },
+  ],
+  graduation: [
+    {
+      key: "classic-academic",
+      label: "Classic Academic",
+      emoji: "🎓",
+      tagline: "Sobre, marine & bordeaux",
+      swatches: ["#f8f5ef", "#1e2a4a", "#8b1f2f", "#d4b574"],
+      overrides: {
+        pageBg: "bg-[#f8f5ef]",
+        pageText: "text-[#1e2a4a]",
+        surface: "bg-white/70 backdrop-blur",
+        border: "border-[#8b1f2f]/25",
+        accent: "text-[#8b1f2f]",
+        accentBg: "bg-[#8b1f2f]",
+        decor: "none",
+        overlay: undefined,
+        ctaClass: "bg-[#8b1f2f] text-white hover:bg-[#a83548]",
+      },
+    },
+    {
+      key: "inspirational-glow",
+      label: "Inspirational Glow",
+      emoji: "✨",
+      tagline: "Étoiles, lumière dorée",
+      swatches: ["#1e1b3a", "#fbbf24", "#fde68a", "#2d1b4e"],
+      overrides: {},
+    },
+    {
+      key: "night-ceremony",
+      label: "Night Ceremony",
+      emoji: "🌌",
+      tagline: "Cérémonie nocturne élégante",
+      swatches: ["#050816", "#6366f1", "#c4b5fd", "#fbbf24"],
+      overrides: {
+        pageBg: "bg-gradient-to-br from-[#050816] via-[#0f1233] to-[#1a0f3d]",
+        pageText: "text-indigo-100",
+        accent: "text-indigo-300",
+        accentBg: "bg-indigo-400",
+        border: "border-indigo-400/25",
+        overlay:
+          "radial-gradient(50% 50% at 50% 0%, rgba(99,102,241,0.2), transparent 70%)",
+        ctaClass:
+          "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-xl shadow-indigo-500/40",
+      },
+    },
+  ],
+  luxury: [
+    {
+      key: "black-gold",
+      label: "Black & Gold",
+      emoji: "🌟",
+      tagline: "Ultra premium noir & or",
+      swatches: ["#000", "#d4af37", "#1a1a1a", "#f5e9c8"],
+      overrides: {},
+    },
+    {
+      key: "glass-nightclub",
+      label: "Glass Night Club",
+      emoji: "🥂",
+      tagline: "Glassmorphism, ambiance club",
+      swatches: ["#0d0820", "#ec4899", "#8b5cf6", "#f0abfc"],
+      overrides: {
+        pageBg: "bg-gradient-to-br from-[#0d0820] via-[#1f0a3d] to-[#0a0a1f]",
+        pageText: "text-pink-100",
+        surface: "bg-white/[0.06] backdrop-blur-3xl",
+        accent: "text-pink-300",
+        accentBg: "bg-pink-400",
+        border: "border-pink-400/25",
+        overlay:
+          "radial-gradient(40% 40% at 20% 10%, rgba(236,72,153,0.3), transparent 60%), radial-gradient(40% 40% at 80% 90%, rgba(139,92,246,0.3), transparent 60%)",
+        decor: "particles",
+        ctaClass:
+          "bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 text-white shadow-2xl shadow-pink-500/40",
+      },
+    },
+    {
+      key: "minimal-white",
+      label: "Minimal Luxury White",
+      emoji: "🤍",
+      tagline: "Espace blanc, luxe discret",
+      swatches: ["#fafaf7", "#1a1a1a", "#d4af37", "#e8e3d8"],
+      overrides: {
+        pageBg: "bg-[#fafaf7]",
+        pageText: "text-[#1a1a1a]",
+        surface: "bg-white",
+        border: "border-[#d4af37]/30",
+        accent: "text-[#a8884a]",
+        accentBg: "bg-[#1a1a1a]",
+        overlay: undefined,
+        decor: "none",
+        font: "font-serif",
+        headingFont: "font-serif tracking-tight",
+        ctaClass: "bg-[#1a1a1a] text-white hover:bg-[#333]",
+      },
+    },
+  ],
+};
+
+export function resolveTheme(themeKey: ThemeKey, subKey?: string | null): ThemeConfig {
+  const base = THEMES[themeKey] ?? THEMES.minimal;
+  if (!subKey) return base;
+  const variant = SUBTHEMES[themeKey]?.find((s) => s.key === subKey);
+  if (!variant) return base;
+  return { ...base, ...variant.overrides };
+}
+
+export function defaultSubtheme(themeKey: ThemeKey): string {
+  return SUBTHEMES[themeKey]?.[0]?.key ?? "";
+}
