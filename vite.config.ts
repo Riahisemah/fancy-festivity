@@ -13,7 +13,24 @@ export default defineConfig({
     server: { entry: "server" },
   },
   nitro: {
+    preset: "netlify",
     // Bundle server deps instead of nf3/@vercel/nft tracing (avoids Node 22 CJS/ESM build failure on Netlify).
     noExternals: true,
+    // Add these options to fix the 500 errors
+    output: {
+      publicDir: 'dist/client',
+      serverDir: 'dist/server',
+    },
+    // Ensure proper Netlify function generation
+    netlify: {
+      functions: 'netlify/functions',
+    },
+  },
+  // Add build configuration
+  vite: {
+    build: {
+      outDir: 'dist',
+      emptyOutDir: true,
+    },
   },
 });
