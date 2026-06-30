@@ -1,36 +1,32 @@
-// @lovable.dev/vite-tanstack-config already includes the following — do NOT add them manually
-// or the app will break with duplicate plugins:
-//   - tanstackStart, viteReact, tailwindcss, tsConfigPaths, nitro (build-only using cloudflare as a default target),
-//     componentTagger (dev-only), VITE_* env injection, @ path alias, React/TanStack dedupe,
-//     error logger plugins, and sandbox detection (port/host/strictPort).
-// You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
     server: { entry: "server" },
   },
   nitro: {
     preset: "netlify",
-    // Bundle server deps instead of nf3/@vercel/nft tracing (avoids Node 22 CJS/ESM build failure on Netlify).
     noExternals: true,
-    // Add these options to fix the 500 errors
+    // Add this to fix the server function path
+    netlify: {
+      functions: 'netlify/functions',
+    },
+    // Ensure proper output structure
     output: {
       publicDir: 'dist/client',
       serverDir: 'dist/server',
     },
-    // Ensure proper Netlify function generation
-    netlify: {
-      functions: 'netlify/functions',
-    },
   },
-  // Add build configuration
+  // Add this to fix the function generation
   vite: {
     build: {
       outDir: 'dist',
       emptyOutDir: true,
+    },
+    server: {
+      fs: {
+        allow: ['.'],
+      },
     },
   },
 });
