@@ -1,21 +1,24 @@
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 
 export default defineConfig({
-  tanstackStart: {
-    server: { entry: "server" },
+  plugins: [
+    TanStackRouterVite(),
+    react(),
+    tsconfigPaths(),
+  ],
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+      },
+    },
   },
-  nitro: {
-    preset: "netlify",
-    noExternals: true,
-    // Disable the problematic internal function generation
-    netlify: {
-      functions: 'netlify/functions',
-    },
-    output: {
-      publicDir: 'dist/client',
-      serverDir: 'dist/server',
-    },
-    // Skip the internal functions directory
-    skipFunctions: true,
+  server: {
+    port: 5173,
   },
 });
