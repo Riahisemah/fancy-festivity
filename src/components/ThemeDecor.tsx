@@ -16,7 +16,48 @@ export function ThemeDecor({ theme }: { theme: ThemeConfig }) {
       {theme.decor === "stars" && <Stars />}
       {theme.decor === "particles" && <Particles />}
       {theme.decor === "grid" && <Grid />}
+      {theme.decor === "arabesque" && <Arabesque />}
     </div>
+  );
+}
+
+function Arabesque() {
+  const items = Array.from({ length: 18 });
+  return (
+    <>
+      <div
+        className="absolute inset-0 opacity-[0.08]"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 25% 25%, #a8884a 0.5px, transparent 1px), radial-gradient(circle at 75% 75%, #a8884a 0.5px, transparent 1px)",
+          backgroundSize: "56px 56px, 56px 56px",
+          maskImage: "radial-gradient(ellipse at center, black 40%, transparent 85%)",
+        }}
+      />
+      {items.map((_, i) => {
+        const left = (i * 41 + 7) % 100;
+        const top = (i * 29 + 11) % 100;
+        const size = 32 + (i % 4) * 12;
+        const delay = (i % 6) * 0.5;
+        return (
+          <motion.svg
+            key={i}
+            initial={{ opacity: 0, scale: 0.7, rotate: 0 }}
+            animate={{ opacity: [0, 0.25, 0.25, 0], scale: [0.7, 1, 1, 0.9], rotate: [0, 20, -10, 0] }}
+            transition={{ duration: 16 + (i % 5) * 2, delay, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute"
+            style={{ left: `${left}%`, top: `${top}%`, width: size, height: size }}
+            viewBox="0 0 100 100"
+            fill="none"
+            stroke="#a8884a"
+            strokeWidth="0.8"
+          >
+            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z" />
+            <circle cx="50" cy="50" r="6" />
+          </motion.svg>
+        );
+      })}
+    </>
   );
 }
 

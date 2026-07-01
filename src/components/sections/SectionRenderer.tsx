@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Calendar, Clock, MapPin, Phone, Mail, Link as LinkIcon, ChevronDown } from "lucide-react";
 import type { ThemeConfig } from "@/lib/themes";
 import type { Section } from "@/lib/sections";
+import { t, formatDateLong as fmtDate, isRTL, type Lang } from "@/lib/i18n";
 
 const reveal = {
   initial: { opacity: 0, y: 32 },
@@ -12,10 +13,12 @@ const reveal = {
   transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
 };
 
-export function SectionRenderer({ section, theme, index }: { section: Section; theme: ThemeConfig; index: number }) {
+export function SectionRenderer({
+  section, theme, index, lang = "fr",
+}: { section: Section; theme: ThemeConfig; index: number; lang?: Lang }) {
   switch (section.kind) {
-    case "hero":       return <HeroBlock s={section} t={theme} />;
-    case "event":      return <EventBlock s={section} t={theme} />;
+    case "hero":       return <HeroBlock s={section} t={theme} lang={lang} />;
+    case "event":      return <EventBlock s={section} t={theme} lang={lang} />;
     case "timeline":   return <TimelineBlock s={section} t={theme} />;
     case "card":       return <CardBlock s={section} t={theme} />;
     case "gallery":    return <GalleryBlock s={section} t={theme} />;
@@ -23,19 +26,20 @@ export function SectionRenderer({ section, theme, index }: { section: Section; t
     case "map":        return <MapBlock s={section} t={theme} />;
     case "program":    return <ProgramBlock s={section} t={theme} />;
     case "quote":      return <QuoteBlock s={section} t={theme} />;
-    case "countdown":  return <CountdownBlock s={section} t={theme} />;
+    case "countdown":  return <CountdownBlock s={section} t={theme} lang={lang} />;
     case "contact":    return <ContactBlock s={section} t={theme} />;
     case "faq":        return <FaqBlock s={section} t={theme} />;
   }
 }
 
 /* ---------- HERO ---------- */
-function HeroBlock({ s, t }: { s: Extract<Section, { kind: "hero" }>; t: ThemeConfig }) {
+function HeroBlock({ s, t, lang }: { s: Extract<Section, { kind: "hero" }>; t: ThemeConfig; lang: Lang }) {
+  const rtl = isRTL(lang);
   return (
-    <section className="relative text-center py-12 md:py-20">
+    <section className="relative text-center py-12 md:py-20" dir={rtl ? "rtl" : "ltr"}>
       {s.eyebrow && (
         <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
-          className={`text-[11px] uppercase tracking-[0.4em] ${t.accent}`}>{s.eyebrow}</motion.p>
+          className={`text-[11px] uppercase tracking-[0.4em] ${t.accent} ${rtl ? "font-arabic" : ""}`}>{s.eyebrow}</motion.p>
       )}
       <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         className={`mx-auto mt-6 h-px w-16 ${t.accentBg} origin-left`} />
@@ -48,17 +52,17 @@ function HeroBlock({ s, t }: { s: Extract<Section, { kind: "hero" }>; t: ThemeCo
       )}
       <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className={`mt-8 ${t.headingFont} text-5xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight`}>
+        className={`mt-8 ${rtl ? "font-arabic-display" : t.headingFont} text-5xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tight`}>
         {s.title}
       </motion.h1>
       {s.subtitle && (
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 0.85 }} transition={{ duration: 1, delay: 0.6 }}
-          className="mt-6 text-xl md:text-2xl italic">{s.subtitle}</motion.p>
+          className={`mt-6 text-xl md:text-2xl ${rtl ? "font-arabic" : "italic"}`}>{s.subtitle}</motion.p>
       )}
       {(s.date || s.location) && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.75 }}
           className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm md:text-base opacity-80">
-          {s.date && <span>{formatDateLong(s.date)}</span>}
+          {s.date && <span>{fmtDate(s.date, lang)}</span>}
           {s.location && <span>· {s.location}</span>}
         </motion.div>
       )}
@@ -67,17 +71,18 @@ function HeroBlock({ s, t }: { s: Extract<Section, { kind: "hero" }>; t: ThemeCo
 }
 
 /* ---------- EVENT CARD ---------- */
-function EventBlock({ s, t }: { s: Extract<Section, { kind: "event" }>; t: ThemeConfig }) {
+function EventBlock({ s, t, lang }: { s: Extract<Section, { kind: "event" }>; t: ThemeConfig; lang: Lang }) {
   return (
-    <motion.section {...reveal} className={`relative rounded-3xl border ${t.border} ${t.surface} p-8 md:p-12 my-8 overflow-hidden group`}>
+    <motion.section {...reveal} dir={isRTL(lang) ? "rtl" : "ltr"}
+      className={`relative rounded-3xl border ${t.border} ${t.surface} p-8 md:p-12 my-8 overflow-hidden group`}>
       <motion.div className={`absolute inset-0 ${t.accentBg} opacity-0 group-hover:opacity-[0.04] transition-opacity`} />
       <div className="relative text-center">
         {s.icon && <div className="text-4xl mb-4">{s.icon}</div>}
-        <div className={`text-[10px] uppercase tracking-[0.35em] ${t.accent} mb-3`}>Programme</div>
-        <h2 className={`${t.headingFont} text-3xl md:text-5xl tracking-tight`}>{s.title}</h2>
-        {s.description && <p className="mt-4 max-w-xl mx-auto opacity-75 leading-relaxed">{s.description}</p>}
+        <div className={`text-[10px] uppercase tracking-[0.35em] ${t.accent} mb-3`}>{t2(lang, "program")}</div>
+        <h2 className={`${isRTL(lang) ? "font-arabic-display" : t.headingFont} text-3xl md:text-5xl tracking-tight`}>{s.title}</h2>
+        {s.description && <p className={`mt-4 max-w-xl mx-auto opacity-75 leading-relaxed ${isRTL(lang) ? "font-arabic" : ""}`}>{s.description}</p>}
         <div className={`mt-7 flex flex-wrap justify-center gap-2 text-sm`}>
-          {s.date && <Pill t={t} icon={<Calendar className="size-3.5" />}>{formatDateLong(s.date)}</Pill>}
+          {s.date && <Pill t={t} icon={<Calendar className="size-3.5" />}>{fmtDate(s.date, lang)}</Pill>}
           {s.time && <Pill t={t} icon={<Clock className="size-3.5" />}>{s.time}</Pill>}
           {s.location && <Pill t={t} icon={<MapPin className="size-3.5" />}>{s.location}</Pill>}
         </div>
@@ -85,6 +90,8 @@ function EventBlock({ s, t }: { s: Extract<Section, { kind: "event" }>; t: Theme
     </motion.section>
   );
 }
+
+const t2 = t;
 
 function Pill({ t, icon, children }: { t: ThemeConfig; icon: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -212,7 +219,7 @@ function QuoteBlock({ s, t }: { s: Extract<Section, { kind: "quote" }>; t: Theme
 }
 
 /* ---------- COUNTDOWN ---------- */
-function CountdownBlock({ s, t }: { s: Extract<Section, { kind: "countdown" }>; t: ThemeConfig }) {
+function CountdownBlock({ s, t, lang }: { s: Extract<Section, { kind: "countdown" }>; t: ThemeConfig; lang: Lang }) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const i = setInterval(() => setNow(Date.now()), 1000);
@@ -224,7 +231,7 @@ function CountdownBlock({ s, t }: { s: Extract<Section, { kind: "countdown" }>; 
   const h = Math.floor((diff % 86400000) / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
   const sec = Math.floor((diff % 60000) / 1000);
-  const cells: [string, number][] = [["Jours", d], ["Heures", h], ["Minutes", m], ["Secondes", sec]];
+  const cells: [string, number][] = [[t2(lang, "days"), d], [t2(lang, "hours"), h], [t2(lang, "minutes"), m], [t2(lang, "seconds"), sec]];
 
   return (
     <motion.section {...reveal} className="my-12 text-center">
@@ -295,8 +302,3 @@ function FaqBlock({ s, t }: { s: Extract<Section, { kind: "faq" }>; t: ThemeConf
   );
 }
 
-function formatDateLong(d: string) {
-  try {
-    return new Date(d).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  } catch { return d; }
-}

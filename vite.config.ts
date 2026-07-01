@@ -11,8 +11,6 @@ export default defineConfig({
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     server: { entry: "server" },
   },
-  nitro: {
-    // Bundle deps for Netlify (nft tracing fails on @vercel/nft CJS). prebuild creates .netlify/functions-internal/server.
-    noExternals: true,
-  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  nitro: { noExternals: true } as any,
 });

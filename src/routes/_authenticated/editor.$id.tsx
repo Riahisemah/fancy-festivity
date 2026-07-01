@@ -64,6 +64,7 @@ function Editor({ invitation }: { invitation: Invitation }) {
   const [theme, setTheme] = useState<ThemeKey>(invitation.theme);
   const [subtheme, setSubtheme] = useState<string>(invitation.subtheme ?? defaultSubtheme(invitation.theme));
   const [eventName, setEventName] = useState(invitation.event_name);
+  const [language, setLanguage] = useState<import("@/lib/i18n").Lang>(invitation.language ?? "fr");
   const [selectedId, setSelectedId] = useState<string | null>(invitation.sections[0]?.id ?? null);
   const [showPalette, setShowPalette] = useState(false);
 
@@ -77,7 +78,7 @@ function Editor({ invitation }: { invitation: Invitation }) {
     const t = setTimeout(async () => {
       try {
         await patchInvitation(invitation.id, {
-          event_name: eventName, theme, subtheme, sections,
+          event_name: eventName, theme, subtheme, sections, language,
         });
         setSaveState("saved");
         setTimeout(() => setSaveState("idle"), 1400);
@@ -87,7 +88,7 @@ function Editor({ invitation }: { invitation: Invitation }) {
       }
     }, 800);
     return () => clearTimeout(t);
-  }, [sections, theme, subtheme, eventName, invitation.id]);
+  }, [sections, theme, subtheme, eventName, language, invitation.id]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 
@@ -185,6 +186,20 @@ function Editor({ invitation }: { invitation: Invitation }) {
             )}
           </div>
 
+          {/* Language picker */}
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">Langue</div>
+            <div className="grid grid-cols-3 gap-2">
+              {(["fr","ar","en"] as const).map((l) => (
+                <button key={l} onClick={() => setLanguage(l)}
+                  className={`rounded-lg border px-2 py-2 text-xs flex items-center justify-center gap-1.5 transition ${language === l ? "border-accent bg-accent/5" : "border-border hover:bg-muted"}`}>
+                  <span>{l === "fr" ? "🇫🇷" : l === "ar" ? "🇹🇳" : "🇬🇧"}</span>
+                  <span>{l.toUpperCase()}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Sections list */}
           <div className="rounded-2xl border border-border bg-card p-4">
             <div className="flex items-center justify-between mb-3">
@@ -231,10 +246,11 @@ function Editor({ invitation }: { invitation: Invitation }) {
           <div className="p-4 md:p-8">
             <div className="mx-auto max-w-3xl rounded-3xl overflow-hidden shadow-2xl ring-1 ring-border">
               <AnimatePresence mode="wait">
-                <motion.div key={`${theme}-${subtheme}`}
+                <motion.div key={`${theme}-${subtheme}-${language}`}
                   initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className={`relative ${resolved.pageBg} ${resolved.pageText} ${resolved.font} min-h-[600px] overflow-hidden`}>
+                  dir={language === "ar" ? "rtl" : "ltr"}
+                  className={`relative ${resolved.pageBg} ${resolved.pageText} ${language === "ar" ? "font-arabic" : resolved.font} min-h-[600px] overflow-hidden`}>
                   <ThemeDecor theme={resolved} />
                   <div className="relative mx-auto max-w-2xl px-6 py-12">
                     {sections.length === 0 ? (
@@ -245,7 +261,7 @@ function Editor({ invitation }: { invitation: Invitation }) {
                       sections.map((s, i) => (
                         <div key={s.id} onClick={() => setSelectedId(s.id)}
                           className={`relative rounded-2xl transition ${selectedId === s.id ? "ring-2 ring-accent/60 ring-offset-2 ring-offset-transparent" : "hover:ring-1 hover:ring-accent/30"} cursor-pointer`}>
-                          <SectionRenderer section={s} theme={resolved} index={i} />
+                          <SectionRenderer section={s} theme={resolved} index={i} lang={language} />
                         </div>
                       ))
                     )}

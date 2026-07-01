@@ -10,7 +10,8 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
-    defaultSsr: false,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ...({ defaultSsr: false } as any),
   });
 
   return router;

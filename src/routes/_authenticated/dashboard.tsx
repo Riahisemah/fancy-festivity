@@ -8,6 +8,7 @@ import { Copy, ExternalLink, LogOut, Pencil, Plus, Trash2, Eye } from "lucide-re
 import { useAuth } from "@/lib/auth-context";
 import { THEMES, SUBTHEMES, defaultSubtheme, type ThemeKey } from "@/lib/themes";
 import { createSection } from "@/lib/sections";
+import { LANGUAGES, type Lang } from "@/lib/i18n";
 import {
   listInvitationsByUser, createInvitation, deleteInvitation,
   type Invitation,
@@ -33,7 +34,7 @@ function Dashboard() {
   });
 
   const createMut = useMutation({
-    mutationFn: async (v: { event_name: string; hosts: string; event_date: string; location: string; theme: ThemeKey; subtheme: string }) => {
+    mutationFn: async (v: { event_name: string; hosts: string; event_date: string; location: string; theme: ThemeKey; subtheme: string; language: Lang }) => {
       // Pré-remplir avec un Hero pour démarrer
       const hero = createSection("hero");
       if (hero.kind === "hero") {
@@ -49,6 +50,7 @@ function Dashboard() {
         location: v.location,
         theme: v.theme,
         subtheme: v.subtheme,
+        language: v.language,
         sections: [hero],
       });
     },
@@ -200,7 +202,7 @@ function Card({ inv, index, onDelete, onCopy, onEdit }: {
 function CreateModal({ onClose, onSubmit, loading }: {
   onClose: () => void;
   loading: boolean;
-  onSubmit: (v: { event_name: string; hosts: string; event_date: string; location: string; theme: ThemeKey; subtheme: string }) => void;
+  onSubmit: (v: { event_name: string; hosts: string; event_date: string; location: string; theme: ThemeKey; subtheme: string; language: Lang }) => void;
 }) {
   const [event_name, setEventName] = useState("");
   const [hosts, setHosts] = useState("");
@@ -208,6 +210,7 @@ function CreateModal({ onClose, onSubmit, loading }: {
   const [location, setLocation] = useState("");
   const [theme, setTheme] = useState<ThemeKey>("wedding");
   const [subtheme, setSubtheme] = useState<string>(defaultSubtheme("wedding"));
+  const [language, setLanguage] = useState<Lang>("fr");
 
   const inputCls = "w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-accent/40";
   const subs = SUBTHEMES[theme] ?? [];
@@ -224,12 +227,24 @@ function CreateModal({ onClose, onSubmit, loading }: {
           <h2 className="font-serif text-3xl">Nouvelle invitation</h2>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-xl">×</button>
         </div>
-        <form onSubmit={(e) => { e.preventDefault(); onSubmit({ event_name, hosts, event_date, location, theme, subtheme }); }}
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit({ event_name, hosts, event_date, location, theme, subtheme, language }); }}
           className="space-y-3">
           <input required placeholder="Nom de l'événement" className={inputCls} value={event_name} onChange={(e) => setEventName(e.target.value)} />
           <input required placeholder="Hôtes" className={inputCls} value={hosts} onChange={(e) => setHosts(e.target.value)} />
           <input required type="datetime-local" className={inputCls} value={event_date} onChange={(e) => setEventDate(e.target.value)} />
           <input required placeholder="Lieu" className={inputCls} value={location} onChange={(e) => setLocation(e.target.value)} />
+
+          <div>
+            <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2 mt-2">Langue</div>
+            <div className="grid grid-cols-3 gap-2">
+              {LANGUAGES.map((l) => (
+                <button type="button" key={l.code} onClick={() => setLanguage(l.code)}
+                  className={`rounded-xl border px-2 py-2.5 text-xs flex items-center justify-center gap-1.5 ${language === l.code ? "border-accent bg-accent/5" : "border-border hover:bg-muted"}`}>
+                  <span>{l.flag}</span><span>{l.native}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
           <div>
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2 mt-2">Thème</div>

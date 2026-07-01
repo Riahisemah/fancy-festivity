@@ -1,4 +1,4 @@
-export type ThemeKey = "wedding" | "birthday" | "business" | "minimal" | "graduation" | "luxury";
+export type ThemeKey = "wedding" | "birthday" | "business" | "minimal" | "graduation" | "luxury" | "tunisian";
 
 export type ThemeConfig = {
   label: string;
@@ -13,7 +13,7 @@ export type ThemeConfig = {
   font: string;
   headingFont: string;
   overlay?: string;
-  decor: "petals" | "balloons" | "grid" | "stars" | "particles" | "none";
+  decor: "petals" | "balloons" | "grid" | "stars" | "particles" | "arabesque" | "none";
   ctaClass: string;
 };
 
@@ -127,6 +127,24 @@ export const THEMES: Record<ThemeKey, ThemeConfig> = {
     decor: "particles",
     ctaClass:
       "bg-gradient-to-r from-[#d4af37] via-[#f4d77a] to-[#d4af37] text-black font-medium shadow-2xl shadow-[#d4af37]/30 hover:shadow-[#d4af37]/50",
+  },
+  tunisian: {
+    label: "Tunisian Wedding",
+    emoji: "🇹🇳",
+    description: "Élégance tunisienne, motifs & or",
+    pageBg: "bg-[#f8f2e6]",
+    pageText: "text-[#2a1f14]",
+    surface: "bg-white/70 backdrop-blur-xl",
+    border: "border-[#a8884a]/30",
+    accent: "text-[#a8884a]",
+    accentBg: "bg-[#a8884a]",
+    font: "font-serif",
+    headingFont: "font-serif italic",
+    overlay:
+      "radial-gradient(60% 40% at 20% 10%, rgba(168,136,74,0.18), transparent 60%), radial-gradient(50% 40% at 80% 90%, rgba(168,136,74,0.14), transparent 60%)",
+    decor: "arabesque",
+    ctaClass:
+      "bg-gradient-to-r from-[#a8884a] via-[#d4b574] to-[#a8884a] text-white shadow-xl shadow-[#a8884a]/30 hover:shadow-2xl",
   },
 };
 
@@ -461,6 +479,115 @@ export const SUBTHEMES: Record<ThemeKey, SubthemeConfig[]> = {
         font: "font-serif",
         headingFont: "font-serif tracking-tight",
         ctaClass: "bg-[#1a1a1a] text-white hover:bg-[#333]",
+      },
+    },
+  ],
+  tunisian: [
+    {
+      key: "tunisian-classic",
+      label: "Tunisian Classic",
+      emoji: "🕌",
+      tagline: "Ivoire & or, encre profonde",
+      swatches: ["#f8f2e6", "#a8884a", "#2a1f14", "#fff"],
+      overrides: {},
+    },
+    {
+      key: "tunisian-luxury-gold",
+      label: "Tunisian Luxury Gold",
+      emoji: "👑",
+      tagline: "Doré somptueux, damas royal",
+      swatches: ["#0f0a04", "#d4af37", "#8a1e1e", "#f5e9c8"],
+      overrides: {
+        pageBg: "bg-[#0f0a04]",
+        pageText: "text-[#f5e9c8]",
+        surface: "bg-white/[0.05] backdrop-blur-xl",
+        border: "border-[#d4af37]/30",
+        accent: "text-[#d4af37]",
+        accentBg: "bg-[#d4af37]",
+        overlay:
+          "radial-gradient(60% 40% at 50% 0%, rgba(212,175,55,0.25), transparent 70%), radial-gradient(50% 40% at 50% 100%, rgba(138,30,30,0.15), transparent 70%)",
+        decor: "particles",
+        ctaClass:
+          "bg-gradient-to-r from-[#d4af37] via-[#f4d77a] to-[#d4af37] text-black font-medium shadow-2xl shadow-[#d4af37]/40",
+      },
+    },
+    {
+      key: "tunisian-floral",
+      label: "Tunisian Floral",
+      emoji: "🌹",
+      tagline: "Bouquets, pastel & doré",
+      swatches: ["#fdf5f0", "#c47a7a", "#a8884a", "#e8c8b0"],
+      overrides: {
+        pageBg: "bg-gradient-to-br from-[#fdf5f0] via-[#f9ecec] to-[#faf1e2]",
+        pageText: "text-[#3a221f]",
+        accent: "text-[#a8884a]",
+        accentBg: "bg-[#c47a7a]",
+        border: "border-[#c47a7a]/30",
+        overlay:
+          "radial-gradient(50% 40% at 15% 10%, rgba(196,122,122,0.28), transparent 60%), radial-gradient(40% 40% at 85% 90%, rgba(168,136,74,0.22), transparent 60%)",
+        decor: "petals",
+        ctaClass:
+          "bg-gradient-to-r from-[#c47a7a] to-[#e0a8a8] text-white shadow-lg shadow-rose-400/30",
+      },
+    },
+    {
+      key: "tunisian-minimal",
+      label: "Tunisian Minimal",
+      emoji: "🤍",
+      tagline: "Crème pur, filet doré",
+      swatches: ["#fbf7f0", "#e8dfcc", "#a8884a", "#2a1f14"],
+      overrides: {
+        pageBg: "bg-[#fbf7f0]",
+        pageText: "text-[#2a1f14]",
+        surface: "bg-white",
+        border: "border-[#a8884a]/25",
+        accent: "text-[#a8884a]",
+        accentBg: "bg-[#2a1f14]",
+        overlay: undefined,
+        decor: "none",
+        ctaClass: "bg-[#2a1f14] text-[#f8f2e6] hover:bg-[#3a2f22]",
+      },
+    },
+    {
+      key: "tunisian-royal",
+      label: "Tunisian Royal",
+      emoji: "♛",
+      tagline: "Bordeaux, or & motifs damas",
+      swatches: ["#f6ecdc", "#8a1e1e", "#d4af37", "#fff"],
+      overrides: {
+        pageBg: "bg-gradient-to-b from-[#f8f0e0] via-[#f4e7cd] to-[#efdcb0]",
+        pageText: "text-[#2a1f14]",
+        surface: "bg-white/80 backdrop-blur",
+        border: "border-[#8a1e1e]/30",
+        accent: "text-[#8a1e1e]",
+        accentBg: "bg-[#8a1e1e]",
+        overlay:
+          "radial-gradient(50% 30% at 50% 0%, rgba(138,30,30,0.15), transparent 60%), radial-gradient(50% 30% at 50% 100%, rgba(212,175,55,0.25), transparent 60%)",
+        decor: "arabesque",
+        ctaClass:
+          "bg-gradient-to-r from-[#8a1e1e] to-[#a83030] text-[#f5e9c8] shadow-xl shadow-red-900/30",
+      },
+    },
+    {
+      key: "tunisian-modern-elegant",
+      label: "Tunisian Modern Elegant",
+      emoji: "✨",
+      tagline: "Contemporain, beige et bronze",
+      swatches: ["#efe8dc", "#8a7350", "#3a2e22", "#d4b98a"],
+      overrides: {
+        pageBg: "bg-[#efe8dc]",
+        pageText: "text-[#3a2e22]",
+        surface: "bg-white/70 backdrop-blur-lg",
+        border: "border-[#8a7350]/30",
+        accent: "text-[#8a7350]",
+        accentBg: "bg-[#8a7350]",
+        font: "font-sans",
+        headingFont: "font-serif tracking-tight",
+        overlay:
+          "radial-gradient(60% 50% at 50% 0%, rgba(138,115,80,0.12), transparent 70%)",
+        decor: "particles",
+        ctaClass:
+          "bg-[#3a2e22] text-[#efe8dc] hover:bg-[#4a3e32] shadow-lg",
       },
     },
   ],

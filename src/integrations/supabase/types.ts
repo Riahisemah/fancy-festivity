@@ -22,6 +22,7 @@ export type Database = {
           hosts: string
           id: string
           image_url: string | null
+          language: string
           location: string
           message: string | null
           sections: Json
@@ -39,6 +40,7 @@ export type Database = {
           hosts: string
           id?: string
           image_url?: string | null
+          language?: string
           location: string
           message?: string | null
           sections?: Json
@@ -56,6 +58,7 @@ export type Database = {
           hosts?: string
           id?: string
           image_url?: string | null
+          language?: string
           location?: string
           message?: string | null
           sections?: Json
@@ -86,6 +89,7 @@ export type Database = {
         | "minimal"
         | "graduation"
         | "luxury"
+        | "tunisian"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -220,6 +224,7 @@ export const Constants = {
         "minimal",
         "graduation",
         "luxury",
+        "tunisian",
       ],
     },
   },

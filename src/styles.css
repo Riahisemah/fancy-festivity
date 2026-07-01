@@ -136,3 +136,18 @@
 @utility animate-fade {
   animation: fade-in 0.6s ease-out both;
 }
+
+/* Arabic typography */
+.font-arabic { font-family: "Amiri", "Scheherazade New", "Times New Roman", serif; }
+.font-arabic-display { font-family: "Scheherazade New", "Amiri", serif; letter-spacing: 0; }
+[dir="rtl"] { text-align: right; }
+[dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+
+/* Tunisian arabesque background */
+.bg-arabesque {
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(168, 136, 74, 0.08) 0, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(168, 136, 74, 0.08) 0, transparent 40%),
+    repeating-conic-gradient(from 0deg at 50% 50%, rgba(168, 136, 74, 0.03) 0deg 10deg, transparent 10deg 20deg);
+}
+

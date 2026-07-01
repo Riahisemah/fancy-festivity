@@ -3,6 +3,7 @@ import { getSupabase } from "@/integrations/supabase/get-client";
 import type { Tables, Json } from "@/integrations/supabase/types";
 import type { ThemeKey } from "./themes";
 import type { Section } from "./sections";
+import type { Lang } from "./i18n";
 
 export type Invitation = {
   id: string;
@@ -17,6 +18,7 @@ export type Invitation = {
   theme: ThemeKey;
   subtheme: string | null;
   sections: Section[];
+  language: Lang;
   views_count: number;
   created_at: string;
   updated_at: string;
@@ -30,6 +32,7 @@ export type InvitationCreateInput = {
   theme: ThemeKey;
   subtheme?: string | null;
   sections?: Section[];
+  language?: Lang;
 };
 
 export type InvitationPatch = Partial<{
@@ -42,11 +45,13 @@ export type InvitationPatch = Partial<{
   theme: ThemeKey;
   subtheme: string | null;
   sections: Section[];
+  language: Lang;
 }>;
 
-type InvitationRow = Tables<"invitations">;
+type InvitationRow = Tables<"invitations"> & { language?: string | null };
 
 function mapInvitation(row: InvitationRow): Invitation {
+  const lang = (row.language ?? "fr") as Lang;
   return {
     id: row.id,
     slug: row.slug,
@@ -60,6 +65,7 @@ function mapInvitation(row: InvitationRow): Invitation {
     theme: row.theme as ThemeKey,
     subtheme: row.subtheme,
     sections: (Array.isArray(row.sections) ? row.sections : []) as unknown as Section[],
+    language: (["fr", "ar", "en"] as const).includes(lang) ? lang : "fr",
     views_count: row.views_count,
     created_at: row.created_at,
     updated_at: row.updated_at,
@@ -93,20 +99,20 @@ export async function getInvitationBySlug(slug: string): Promise<Invitation | nu
 
 export async function createInvitation(userId: string, input: InvitationCreateInput): Promise<Invitation> {
   const supabase = await getSupabase();
-  const { data, error } = await supabase
-    .from("invitations")
-    .insert({
-      user_id: userId,
-      event_name: input.event_name,
-      hosts: input.hosts,
-      event_date: input.event_date,
-      location: input.location,
-      theme: input.theme,
-      subtheme: input.subtheme ?? null,
-      sections: (input.sections ?? []) as unknown as Json,
-    })
-    .select()
-    .single();
+  const insertRow = {
+    user_id: userId,
+    event_name: input.event_name,
+    hosts: input.hosts,
+    event_date: input.event_date,
+    location: input.location,
+    theme: input.theme,
+    subtheme: input.subtheme ?? null,
+    sections: (input.sections ?? []) as unknown as Json,
+    language: input.language ?? "fr",
+  };
+  const { data, error } = await (supabase.from("invitations") as unknown as {
+    insert: (r: unknown) => { select: () => { single: () => Promise<{ data: InvitationRow; error: Error | null }> } };
+  }).insert(insertRow).select().single();
   if (error) throw error;
   return mapInvitation(data);
 }
