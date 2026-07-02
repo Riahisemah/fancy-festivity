@@ -5,6 +5,8 @@ import { Calendar, Clock, MapPin, Phone, Mail, Link as LinkIcon, ChevronDown } f
 import type { ThemeConfig } from "@/lib/themes";
 import type { Section } from "@/lib/sections";
 import { t, formatDateLong as fmtDate, isRTL, type Lang } from "@/lib/i18n";
+import { SectionShell } from "@/components/immersive/SectionShell";
+import { TiltCard } from "@/components/immersive/TiltCard";
 
 const reveal = {
   initial: { opacity: 0, y: 32 },
@@ -16,20 +18,24 @@ const reveal = {
 export function SectionRenderer({
   section, theme, index, lang = "fr",
 }: { section: Section; theme: ThemeConfig; index: number; lang?: Lang }) {
-  switch (section.kind) {
-    case "hero":       return <HeroBlock s={section} t={theme} lang={lang} />;
-    case "event":      return <EventBlock s={section} t={theme} lang={lang} />;
-    case "timeline":   return <TimelineBlock s={section} t={theme} />;
-    case "card":       return <CardBlock s={section} t={theme} />;
-    case "gallery":    return <GalleryBlock s={section} t={theme} />;
-    case "image-text": return <ImageTextBlock s={section} t={theme} index={index} />;
-    case "map":        return <MapBlock s={section} t={theme} />;
-    case "program":    return <ProgramBlock s={section} t={theme} />;
-    case "quote":      return <QuoteBlock s={section} t={theme} />;
-    case "countdown":  return <CountdownBlock s={section} t={theme} lang={lang} />;
-    case "contact":    return <ContactBlock s={section} t={theme} />;
-    case "faq":        return <FaqBlock s={section} t={theme} />;
-  }
+  const depth = 0.6 + ((index % 3) * 0.35);
+  const inner = (() => {
+    switch (section.kind) {
+      case "hero":       return <HeroBlock s={section} t={theme} lang={lang} />;
+      case "event":      return <TiltCard><EventBlock s={section} t={theme} lang={lang} /></TiltCard>;
+      case "timeline":   return <TimelineBlock s={section} t={theme} />;
+      case "card":       return <TiltCard><CardBlock s={section} t={theme} /></TiltCard>;
+      case "gallery":    return <GalleryBlock s={section} t={theme} />;
+      case "image-text": return <ImageTextBlock s={section} t={theme} index={index} />;
+      case "map":        return <MapBlock s={section} t={theme} />;
+      case "program":    return <TiltCard><ProgramBlock s={section} t={theme} /></TiltCard>;
+      case "quote":      return <QuoteBlock s={section} t={theme} />;
+      case "countdown":  return <CountdownBlock s={section} t={theme} lang={lang} />;
+      case "contact":    return <TiltCard><ContactBlock s={section} t={theme} /></TiltCard>;
+      case "faq":        return <FaqBlock s={section} t={theme} />;
+    }
+  })();
+  return <SectionShell depth={depth}>{inner}</SectionShell>;
 }
 
 /* ---------- HERO ---------- */

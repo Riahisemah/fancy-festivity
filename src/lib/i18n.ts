@@ -15,7 +15,7 @@ type Dict = {
   share: string; copy: string; whatsapp: string; qrcode: string; scanToOpen: string; close: string; linkCopied: string;
   program: string; countdown: string; days: string; hours: string; minutes: string; seconds: string;
   invitedBy: string; untilTheDay: string; footerBrand: string;
-  language: string;
+  language: string; open: string; youAreInvited: string;
 };
 
 const D: Record<Lang, Dict> = {
@@ -26,6 +26,7 @@ const D: Record<Lang, Dict> = {
     days: "Jours", hours: "Heures", minutes: "Minutes", seconds: "Secondes",
     invitedBy: "Vous êtes invité·e", untilTheDay: "Jusqu'au grand jour",
     footerBrand: "Vélon", language: "Langue",
+    open: "Ouvrir l'invitation", youAreInvited: "Vous êtes invité·e",
   },
   ar: {
     share: "مشاركة", copy: "نسخ", whatsapp: "واتساب", qrcode: "رمز QR",
@@ -34,6 +35,7 @@ const D: Record<Lang, Dict> = {
     days: "أيام", hours: "ساعات", minutes: "دقائق", seconds: "ثوان",
     invitedBy: "أنتم مدعوون", untilTheDay: "حتى اليوم الكبير",
     footerBrand: "Vélon", language: "اللغة",
+    open: "افتح الدعوة", youAreInvited: "أنتم مدعوون",
   },
   en: {
     share: "Share", copy: "Copy", whatsapp: "WhatsApp", qrcode: "QR Code",
@@ -42,6 +44,7 @@ const D: Record<Lang, Dict> = {
     days: "Days", hours: "Hours", minutes: "Minutes", seconds: "Seconds",
     invitedBy: "You are invited", untilTheDay: "Until the big day",
     footerBrand: "Vélon", language: "Language",
+    open: "Open the invitation", youAreInvited: "You're invited",
   },
 };
 
