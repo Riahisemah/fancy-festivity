@@ -7,6 +7,7 @@ import type { Section } from "@/lib/sections";
 import { t, formatDateLong as fmtDate, isRTL, type Lang } from "@/lib/i18n";
 import { SectionShell } from "@/components/immersive/SectionShell";
 import { TiltCard } from "@/components/immersive/TiltCard";
+import { RevealText } from "@/components/immersive/RevealText";
 
 const reveal = {
   initial: { opacity: 0, y: 32 },
@@ -35,7 +36,7 @@ export function SectionRenderer({
       case "faq":        return <FaqBlock s={section} t={theme} />;
     }
   })();
-  return <SectionShell depth={depth}>{inner}</SectionShell>;
+  return <SectionShell depth={depth} index={index}>{inner}</SectionShell>;
 }
 
 /* ---------- HERO ---------- */
@@ -56,11 +57,11 @@ function HeroBlock({ s, t, lang }: { s: Extract<Section, { kind: "hero" }>; t: T
           <img src={s.imageUrl} alt={s.title} className="w-full h-auto object-cover" />
         </motion.div>
       )}
-      <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className={`mt-8 ${rtl ? "font-arabic-display" : t.headingFont} text-5xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tight`}>
-        {s.title}
-      </motion.h1>
+      <RevealText
+        className={`mt-8 ${rtl ? "font-arabic-display" : t.headingFont} text-5xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tight`}
+      >
+        <h1 className="inline-block">{s.title}</h1>
+      </RevealText>
       {s.subtitle && (
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 0.85 }} transition={{ duration: 1, delay: 0.6 }}
           className={`mt-6 text-xl md:text-2xl ${rtl ? "font-arabic" : "italic"}`}>{s.subtitle}</motion.p>

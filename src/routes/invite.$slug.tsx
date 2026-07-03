@@ -10,7 +10,9 @@ import { ThemeDecor } from "@/components/ThemeDecor";
 import { SectionRenderer } from "@/components/sections/SectionRenderer";
 import { getInvitationBySlug, incrementViews, type Invitation } from "@/lib/invitations";
 import { t, dirFor, isRTL, type Lang } from "@/lib/i18n";
-import { EnvelopeOpener } from "@/components/immersive/EnvelopeOpener";
+import { Cinematic3DOpener } from "@/components/immersive/Cinematic3DOpener";
+import { ParticleField } from "@/components/immersive/ParticleField";
+import { SmoothScroll } from "@/components/immersive/SmoothScroll";
 import { AmbientBackground } from "@/components/immersive/AmbientBackground";
 import { MagneticButton } from "@/components/immersive/MagneticButton";
 
@@ -54,39 +56,41 @@ function InvitePage() {
   useEffect(() => { incrementViews(invitation.slug); }, [invitation.slug]);
 
   return (
-    <div dir={dir} className={`relative min-h-screen ${theme.pageBg} ${theme.pageText} ${rtl ? "font-arabic" : theme.font} overflow-x-hidden`}>
-      <EnvelopeOpener
-        theme={theme}
-        title={invitation.event_name}
-        hosts={invitation.hosts}
-        lang={lang}
-        storageKey={`velon:opened:${invitation.slug}`}
-      />
-      <ThemeDecor theme={theme} />
-      <AmbientBackground theme={theme} />
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="relative mx-auto max-w-3xl px-6 py-12 md:py-20">
-        {invitation.sections.length === 0 ? (
-          <div className="text-center py-20 opacity-70">
-            <p className="text-sm">—</p>
-          </div>
-        ) : (
-          invitation.sections.map((s, i) => (
-            <SectionRenderer key={s.id} section={s} theme={theme} index={i} lang={lang} />
-          ))
-        )}
+    <SmoothScroll>
+      <div dir={dir} className={`relative min-h-screen ${theme.pageBg} ${theme.pageText} ${rtl ? "font-arabic" : theme.font} overflow-x-hidden`}>
+        <Cinematic3DOpener
+          theme={theme}
+          title={invitation.event_name}
+          hosts={invitation.hosts}
+          lang={lang}
+          storageKey={`velon:opened:${invitation.slug}`}
+        />
+        <ThemeDecor theme={theme} />
+        <AmbientBackground theme={theme} />
+        <ParticleField color={theme.decor === "particles" || theme.decor === "arabesque" ? "#d4af37" : "#ffffff"} />
 
-        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-          transition={{ duration: 0.7 }} className="mt-16">
-          <ShareBar theme={theme} eventName={invitation.event_name} lang={lang} />
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-10 mx-auto max-w-3xl px-6 py-12 md:py-20">
+          {invitation.sections.length === 0 ? (
+            <div className="text-center py-20 opacity-70"><p className="text-sm">—</p></div>
+          ) : (
+            invitation.sections.map((s, i) => (
+              <SectionRenderer key={s.id} section={s} theme={theme} index={i} lang={lang} />
+            ))
+          )}
+
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.7 }} className="mt-16">
+            <ShareBar theme={theme} eventName={invitation.event_name} lang={lang} />
+          </motion.div>
+
+          <footer className="mt-20 text-center">
+            <Link to="/" className="text-[10px] uppercase tracking-[0.3em] opacity-40 hover:opacity-80 transition-opacity">{t(lang, "footerBrand")}</Link>
+          </footer>
         </motion.div>
-
-        <footer className="mt-20 text-center">
-          <Link to="/" className="text-[10px] uppercase tracking-[0.3em] opacity-40 hover:opacity-80 transition-opacity">{t(lang, "footerBrand")}</Link>
-        </footer>
-      </motion.div>
-    </div>
+      </div>
+    </SmoothScroll>
   );
 }
 
