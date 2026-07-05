@@ -22,39 +22,79 @@ export function ThemeDecor({ theme }: { theme: ThemeConfig }) {
 }
 
 function Arabesque() {
-  const items = Array.from({ length: 18 });
+  const mandalas = Array.from({ length: 8 });
+  const dust = Array.from({ length: 28 });
   return (
     <>
+      {/* Fine dotted arabesque grid */}
       <div
-        className="absolute inset-0 opacity-[0.08]"
+        className="absolute inset-0 opacity-[0.10]"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 25% 25%, #a8884a 0.5px, transparent 1px), radial-gradient(circle at 75% 75%, #a8884a 0.5px, transparent 1px)",
-          backgroundSize: "56px 56px, 56px 56px",
-          maskImage: "radial-gradient(ellipse at center, black 40%, transparent 85%)",
+            "radial-gradient(circle at 25% 25%, #a8884a 0.6px, transparent 1.2px), radial-gradient(circle at 75% 75%, #a8884a 0.6px, transparent 1.2px)",
+          backgroundSize: "48px 48px, 48px 48px",
+          maskImage: "radial-gradient(ellipse at center, black 45%, transparent 88%)",
         }}
       />
-      {items.map((_, i) => {
-        const left = (i * 41 + 7) % 100;
-        const top = (i * 29 + 11) % 100;
-        const size = 32 + (i % 4) * 12;
-        const delay = (i % 6) * 0.5;
+      {/* Repeating conic damask */}
+      <div
+        className="absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            "repeating-conic-gradient(from 0deg at 50% 50%, rgba(168,136,74,0.35) 0deg 6deg, transparent 6deg 22deg)",
+          maskImage: "radial-gradient(ellipse at center, black 20%, transparent 70%)",
+        }}
+      />
+      {/* Ornate rotating mandalas */}
+      {mandalas.map((_, i) => {
+        const left = (i * 37 + 8) % 100;
+        const top = (i * 47 + 12) % 100;
+        const size = 90 + (i % 4) * 40;
+        const delay = (i % 5) * 0.7;
+        const dir = i % 2 ? 1 : -1;
         return (
           <motion.svg
             key={i}
             initial={{ opacity: 0, scale: 0.7, rotate: 0 }}
-            animate={{ opacity: [0, 0.25, 0.25, 0], scale: [0.7, 1, 1, 0.9], rotate: [0, 20, -10, 0] }}
-            transition={{ duration: 16 + (i % 5) * 2, delay, repeat: Infinity, ease: "easeInOut" }}
+            animate={{ opacity: [0, 0.18, 0.22, 0], scale: [0.7, 1, 1, 0.9], rotate: 360 * dir }}
+            transition={{ duration: 40 + (i % 5) * 6, delay, repeat: Infinity, ease: "linear" }}
             className="absolute"
             style={{ left: `${left}%`, top: `${top}%`, width: size, height: size }}
-            viewBox="0 0 100 100"
+            viewBox="0 0 120 120"
             fill="none"
             stroke="#a8884a"
-            strokeWidth="0.8"
+            strokeWidth="0.7"
           >
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z" />
-            <circle cx="50" cy="50" r="6" />
+            <circle cx="60" cy="60" r="6" />
+            <circle cx="60" cy="60" r="18" strokeDasharray="1.5 2.5" />
+            <circle cx="60" cy="60" r="34" strokeDasharray="0.8 3" />
+            <path d="M60 8 L68 45 L108 60 L68 75 L60 112 L52 75 L12 60 L52 45 Z" />
+            <g strokeWidth="0.5">
+              {Array.from({ length: 8 }).map((__, k) => (
+                <path
+                  key={k}
+                  d="M60 22 q6 12 0 22 q-6 -10 0 -22"
+                  transform={`rotate(${k * 45} 60 60)`}
+                />
+              ))}
+            </g>
           </motion.svg>
+        );
+      })}
+      {/* Slow golden dust */}
+      {dust.map((_, i) => {
+        const left = (i * 53) % 100;
+        const delay = (i % 9) * 0.4;
+        const size = 1 + (i % 3);
+        return (
+          <motion.span
+            key={`d${i}`}
+            initial={{ y: "110%", opacity: 0 }}
+            animate={{ y: ["110%", "-10%"], opacity: [0, 0.9, 0] }}
+            transition={{ duration: 14 + (i % 6) * 2, delay, repeat: Infinity, ease: "linear" }}
+            className="absolute rounded-full bg-[#d4af37]"
+            style={{ left: `${left}%`, width: size, height: size, boxShadow: "0 0 8px rgba(212,175,55,0.9)" }}
+          />
         );
       })}
     </>

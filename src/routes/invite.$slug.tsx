@@ -15,6 +15,7 @@ import { ParticleField } from "@/components/immersive/ParticleField";
 import { SmoothScroll } from "@/components/immersive/SmoothScroll";
 import { AmbientBackground } from "@/components/immersive/AmbientBackground";
 import { MagneticButton } from "@/components/immersive/MagneticButton";
+import { TunisianFrame, WaxSeal } from "@/components/immersive/TunisianOrnaments";
 
 export const Route = createFileRoute("/invite/$slug")({
   ssr: false,
@@ -68,6 +69,7 @@ function InvitePage() {
         <ThemeDecor theme={theme} />
         <AmbientBackground theme={theme} />
         <ParticleField color={theme.decor === "particles" || theme.decor === "arabesque" ? "#d4af37" : "#ffffff"} />
+        {invitation.theme === "tunisian" && <TunisianFrame />}
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -84,6 +86,12 @@ function InvitePage() {
             transition={{ duration: 0.7 }} className="mt-16">
             <ShareBar theme={theme} eventName={invitation.event_name} lang={lang} />
           </motion.div>
+
+          {invitation.theme === "tunisian" && (
+            <div className="mt-14 flex justify-center">
+              <WaxSeal label={invitation.event_name?.[0]?.toUpperCase() ?? "V"} />
+            </div>
+          )}
 
           <footer className="mt-20 text-center">
             <Link to="/" className="text-[10px] uppercase tracking-[0.3em] opacity-40 hover:opacity-80 transition-opacity">{t(lang, "footerBrand")}</Link>

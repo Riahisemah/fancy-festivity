@@ -8,6 +8,7 @@ import { t, formatDateLong as fmtDate, isRTL, type Lang } from "@/lib/i18n";
 import { SectionShell } from "@/components/immersive/SectionShell";
 import { TiltCard } from "@/components/immersive/TiltCard";
 import { RevealText } from "@/components/immersive/RevealText";
+import { ArabesqueDivider } from "@/components/immersive/TunisianOrnaments";
 
 const reveal = {
   initial: { opacity: 0, y: 32 },
@@ -36,7 +37,13 @@ export function SectionRenderer({
       case "faq":        return <FaqBlock s={section} t={theme} />;
     }
   })();
-  return <SectionShell depth={depth} index={index}>{inner}</SectionShell>;
+  const isOrnate = theme.decor === "arabesque" || theme.decor === "petals";
+  return (
+    <>
+      {index > 0 && isOrnate && <ArabesqueDivider />}
+      <SectionShell depth={depth} index={index}>{inner}</SectionShell>
+    </>
+  );
 }
 
 /* ---------- HERO ---------- */
@@ -60,7 +67,7 @@ function HeroBlock({ s, t, lang }: { s: Extract<Section, { kind: "hero" }>; t: T
       <RevealText
         className={`mt-8 ${rtl ? "font-arabic-display" : t.headingFont} text-5xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tight`}
       >
-        <h1 className="inline-block">{s.title}</h1>
+        <h1 className={`inline-block ${t.decor === "arabesque" ? "text-gold-foil" : ""}`}>{s.title}</h1>
       </RevealText>
       {s.subtitle && (
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 0.85 }} transition={{ duration: 1, delay: 0.6 }}
@@ -163,9 +170,11 @@ function GalleryBlock({ s, t }: { s: Extract<Section, { kind: "gallery" }>; t: T
 /* ---------- IMAGE + TEXT ---------- */
 function ImageTextBlock({ s, t, index }: { s: Extract<Section, { kind: "image-text" }>; t: ThemeConfig; index: number }) {
   void index;
+  const orderText = s.reverse ? "md:order-1" : "md:order-2";
+  const orderImage = s.reverse ? "md:order-2" : "md:order-1";
   return (
-    <motion.section {...reveal} className={`my-12 grid md:grid-cols-2 gap-8 md:gap-12 items-center ${s.reverse ? "md:[direction:rtl]" : ""}`}>
-      <div className="md:[direction:ltr]">
+    <motion.section {...reveal} className="my-12 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div className={orderImage}>
         {s.imageUrl ? (
           <motion.img whileHover={{ scale: 1.02 }} transition={{ duration: 0.6 }}
             src={s.imageUrl} alt={s.title} className="w-full aspect-[4/5] object-cover rounded-3xl shadow-2xl ring-1 ring-black/10" />
@@ -173,7 +182,7 @@ function ImageTextBlock({ s, t, index }: { s: Extract<Section, { kind: "image-te
           <div className={`w-full aspect-[4/5] rounded-3xl ${t.surface} border ${t.border}`} />
         )}
       </div>
-      <div className="md:[direction:ltr]">
+      <div className={orderText}>
         <h2 className={`${t.headingFont} text-3xl md:text-5xl tracking-tight`}>{s.title}</h2>
         <p className="mt-5 leading-relaxed opacity-80 whitespace-pre-line">{s.body}</p>
       </div>
