@@ -202,4 +202,40 @@
 }
 .animate-float-slow { animation: float-slow 7s ease-in-out infinite; }
 
+/* Premium surface — glassy card with gold hairline + subtle inner glow */
+.surface-premium {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
+    radial-gradient(120% 100% at 0% 0%, rgba(212,175,55,0.10), transparent 60%),
+    radial-gradient(120% 100% at 100% 100%, rgba(212,175,55,0.08), transparent 60%);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  box-shadow:
+    0 30px 80px -30px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 0 0 1px rgba(212,175,55,0.18);
+}
+.surface-premium::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(120deg, rgba(212,175,55,0.55), rgba(255,244,198,0.15) 30%, transparent 55%, rgba(212,175,55,0.5) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.8;
+}
+.surface-premium::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit; overflow: hidden;
+  background: linear-gradient(110deg, transparent 40%, rgba(255,244,198,0.18) 50%, transparent 60%);
+  background-size: 250% 100%;
+  animation: gold-shimmer 9s ease-in-out infinite;
+  pointer-events: none; mix-blend-mode: overlay;
+}
+
+
 

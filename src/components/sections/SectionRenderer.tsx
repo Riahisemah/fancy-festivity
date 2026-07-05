@@ -9,6 +9,7 @@ import { SectionShell } from "@/components/immersive/SectionShell";
 import { TiltCard } from "@/components/immersive/TiltCard";
 import { RevealText } from "@/components/immersive/RevealText";
 import { ArabesqueDivider } from "@/components/immersive/TunisianOrnaments";
+import { LuxuryDivider } from "@/components/immersive/LuxuryDivider";
 
 const reveal = {
   initial: { opacity: 0, y: 32 },
@@ -40,7 +41,7 @@ export function SectionRenderer({
   const isOrnate = theme.decor === "arabesque" || theme.decor === "petals";
   return (
     <>
-      {index > 0 && isOrnate && <ArabesqueDivider />}
+      {index > 0 && (isOrnate ? <ArabesqueDivider /> : <LuxuryDivider variant={index} />)}
       <SectionShell depth={depth} index={index}>{inner}</SectionShell>
     </>
   );
@@ -88,8 +89,8 @@ function HeroBlock({ s, t, lang }: { s: Extract<Section, { kind: "hero" }>; t: T
 function EventBlock({ s, t, lang }: { s: Extract<Section, { kind: "event" }>; t: ThemeConfig; lang: Lang }) {
   return (
     <motion.section {...reveal} dir={isRTL(lang) ? "rtl" : "ltr"}
-      className={`relative rounded-3xl border ${t.border} ${t.surface} p-8 md:p-12 my-8 overflow-hidden group`}>
-      <motion.div className={`absolute inset-0 ${t.accentBg} opacity-0 group-hover:opacity-[0.04] transition-opacity`} />
+      className={`surface-premium relative rounded-3xl border ${t.border} p-8 md:p-12 my-8 overflow-hidden group`}>
+      <motion.div className={`absolute inset-0 ${t.accentBg} opacity-0 group-hover:opacity-[0.05] transition-opacity`} />
       <div className="relative text-center">
         {s.icon && <div className="text-4xl mb-4">{s.icon}</div>}
         <div className={`text-[10px] uppercase tracking-[0.35em] ${t.accent} mb-3`}>{t2(lang, "program")}</div>
@@ -142,7 +143,7 @@ function TimelineBlock({ s, t }: { s: Extract<Section, { kind: "timeline" }>; t:
 /* ---------- CARD ---------- */
 function CardBlock({ s, t }: { s: Extract<Section, { kind: "card" }>; t: ThemeConfig }) {
   return (
-    <motion.section {...reveal} className={`my-8 rounded-3xl border ${t.border} ${t.surface} p-8 md:p-12 text-center`}>
+    <motion.section {...reveal} className={`surface-premium my-8 rounded-3xl border ${t.border} p-8 md:p-12 text-center overflow-hidden`}>
       <h2 className={`${t.headingFont} text-3xl md:text-4xl`}>{s.title}</h2>
       <p className="mt-5 max-w-2xl mx-auto leading-relaxed opacity-80 whitespace-pre-line">{s.body}</p>
     </motion.section>
@@ -207,7 +208,7 @@ function MapBlock({ s, t }: { s: Extract<Section, { kind: "map" }>; t: ThemeConf
 /* ---------- PROGRAM ---------- */
 function ProgramBlock({ s, t }: { s: Extract<Section, { kind: "program" }>; t: ThemeConfig }) {
   return (
-    <motion.section {...reveal} className={`my-12 rounded-3xl border ${t.border} ${t.surface} p-8 md:p-10`}>
+    <motion.section {...reveal} className={`surface-premium my-12 rounded-3xl border ${t.border} p-8 md:p-10 overflow-hidden`}>
       {s.title && <h2 className={`${t.headingFont} text-2xl md:text-3xl text-center mb-6`}>{s.title}</h2>}
       <ul className="divide-y divide-current/10 max-w-md mx-auto">
         {s.items.map((it, i) => (
@@ -270,7 +271,7 @@ function ContactBlock({ s, t }: { s: Extract<Section, { kind: "contact" }>; t: T
   const hrefFor = (it: { value: string; type?: string }) =>
     it.type === "phone" ? `tel:${it.value}` : it.type === "email" ? `mailto:${it.value}` : it.value;
   return (
-    <motion.section {...reveal} className={`my-12 rounded-3xl border ${t.border} ${t.surface} p-8 md:p-10`}>
+    <motion.section {...reveal} className={`surface-premium my-12 rounded-3xl border ${t.border} p-8 md:p-10 overflow-hidden`}>
       {s.title && <h2 className={`${t.headingFont} text-2xl md:text-3xl text-center mb-6`}>{s.title}</h2>}
       <ul className="space-y-3 max-w-md mx-auto">
         {s.items.map((it, i) => (
