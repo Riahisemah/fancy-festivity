@@ -16,6 +16,7 @@ import { SmoothScroll } from "@/components/immersive/SmoothScroll";
 import { AmbientBackground } from "@/components/immersive/AmbientBackground";
 import { MagneticButton } from "@/components/immersive/MagneticButton";
 import { TunisianFrame, WaxSeal } from "@/components/immersive/TunisianOrnaments";
+import { ThemedAmbient } from "@/components/immersive/ThemedAmbient";
 
 export const Route = createFileRoute("/invite/$slug")({
   ssr: false,
@@ -68,6 +69,7 @@ function InvitePage() {
         />
         <ThemeDecor theme={theme} />
         <AmbientBackground theme={theme} />
+        <ThemedAmbient theme={theme} />
         <ParticleField color={theme.decor === "particles" || theme.decor === "arabesque" ? "#d4af37" : "#ffffff"} />
         {invitation.theme === "tunisian" && <TunisianFrame />}
 

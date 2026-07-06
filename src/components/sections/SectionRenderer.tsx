@@ -42,7 +42,9 @@ export function SectionRenderer({
   return (
     <>
       {index > 0 && (isOrnate ? <ArabesqueDivider /> : <LuxuryDivider variant={index} />)}
-      <SectionShell depth={depth} index={index}>{inner}</SectionShell>
+      <SectionShell depth={depth} index={index} themeDecor={theme.decor}>
+        {inner}
+      </SectionShell>
     </>
   );
 }
