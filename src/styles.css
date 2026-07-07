@@ -140,19 +140,24 @@
 /* =============================
    Arabic typography — modern & classic stacks
    ============================= */
-.font-arabic          { font-family: "Cairo", "IBM Plex Sans Arabic", "Tajawal", "Noto Kufi Arabic", "Segoe UI", system-ui, sans-serif; font-feature-settings: "kern", "liga"; letter-spacing: 0; }
-.font-arabic-modern   { font-family: "IBM Plex Sans Arabic", "Cairo", "Tajawal", sans-serif; }
-.font-arabic-kufi     { font-family: "Noto Kufi Arabic", "Cairo", sans-serif; letter-spacing: 0; }
-.font-arabic-display  { font-family: "Amiri", "Scheherazade New", "Cairo", serif; letter-spacing: 0; line-height: 1.35; }
-.font-arabic-elegant  { font-family: "Amiri", "Scheherazade New", serif; font-style: italic; }
+.font-arabic          { font-family: "Cairo", "IBM Plex Sans Arabic", "Tajawal", "Noto Kufi Arabic", "Segoe UI", system-ui, sans-serif; font-feature-settings: "kern", "liga", "calt"; letter-spacing: 0; }
+.font-arabic-modern   { font-family: "IBM Plex Sans Arabic", "Cairo", "Tajawal", sans-serif; font-feature-settings: "kern", "liga", "calt"; }
+.font-arabic-kufi     { font-family: "Noto Kufi Arabic", "Cairo", sans-serif; font-feature-settings: "kern", "liga", "calt"; letter-spacing: 0; }
+.font-arabic-display  { font-family: "Amiri", "Scheherazade New", "Cairo", serif; font-feature-settings: "kern", "liga", "calt"; letter-spacing: 0; line-height: 1.5; }
+.font-arabic-elegant  { font-family: "Amiri", "Scheherazade New", serif; font-feature-settings: "kern", "liga", "calt"; font-style: normal; }
 
 /* RTL layout niceties */
 [dir="rtl"]                       { text-align: right; }
 [dir="rtl"] .rtl-flip             { transform: scaleX(-1); }
 [dir="rtl"] .rtl-mirror-x         { transform: scaleX(-1); }
-[dir="rtl"] :where(h1,h2,h3,h4,p) { line-height: 1.6; }
+[dir="rtl"] :where(h1,h2,h3,h4,p,li,span,blockquote) { line-height: 1.65; letter-spacing: 0; }
+[dir="rtl"] .uppercase            { text-transform: none; letter-spacing: 0; }
+[dir="rtl"] .tracking-tight       { letter-spacing: 0; }
+[dir="rtl"] .tracking-widest      { letter-spacing: 0; }
 [dir="rtl"] .tabular-nums         { direction: ltr; unicode-bidi: embed; display: inline-block; }
 [dir="rtl"] .no-flip              { transform: none; }
+[dir="rtl"] input,
+[dir="rtl"] textarea              { text-align: right; }
 
 /* Tunisian arabesque background pattern */
 .bg-arabesque {
@@ -237,5 +242,55 @@
   pointer-events: none; mix-blend-mode: overlay;
 }
 
+/* =========================
+   Mobile — téléphones (cible principale)
+   ========================= */
 
+html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+@utility safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+@utility safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility safe-x {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+@utility touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+@utility min-h-dvh {
+  min-height: 100dvh;
+}
+
+/* Évite le zoom iOS sur les champs < 16px */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+@media (pointer: coarse) {
+  button,
+  a,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
 

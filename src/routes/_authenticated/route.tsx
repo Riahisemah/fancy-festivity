@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function ProtectedLayout() {
-  const { user, loading } = useAuth();
+  const { user, loading, isSuperAdmin, accountActive, profile } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,6 +18,17 @@ function ProtectedLayout() {
     }
   }, [user, loading, navigate]);
 
+  useEffect(() => {
+    if (!loading && user && profile && !isSuperAdmin && !accountActive) {
+      const status = profile.status;
+      if (status === "suspended") {
+        navigate({ to: "/auth", replace: true, search: { reason: "suspended" } });
+      } else {
+        navigate({ to: "/auth", replace: true, search: { reason: "expired" } });
+      }
+    }
+  }, [loading, user, profile, isSuperAdmin, accountActive, navigate]);
+
   if (loading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -25,5 +36,14 @@ function ProtectedLayout() {
       </div>
     );
   }
+
+  if (profile && !isSuperAdmin && !accountActive) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-sm text-muted-foreground">Vérification du compte…</div>
+      </div>
+    );
+  }
+
   return <Outlet />;
 }

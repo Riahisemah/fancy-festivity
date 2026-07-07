@@ -1,0 +1,29 @@
+{
+  "id": "tunisian-classic-bilingual",
+  "category": "wedding",
+  "language": "bilingual",
+  "tone": "classic",
+  "copyId": "wedding-classic",
+  "title": "Tunisian Classic Bilingue",
+  "description": "Formulation traditionnelle tunisienne — Arabe puis Français sur la même carte",
+  "theme": "tunisian",
+  "subtheme": "tunisian-classic",
+  "defaultTexts": {
+    "bismillah": "بسم الله الرحمن الرحيم",
+    "heroEyebrow": "بكل فرح و سرور",
+    "heroTitle": "حفل زفاف أمينة و كريم",
+    "heroSubtitle": "Monsieur Mohamed Ben Ali et Madame Fatma Ben Ali ont l'honneur de vous convier à célébrer le mariage de leur fille Amina avec Monsieur Karim Trabelsi",
+    "familiesBody": "تتشرف عائلة بن علي و عائلة طرابلسي بدعوتكم...\n\n—\n\nLes familles Ben Ali et Trabelsi ont l'honneur de vous convier..."
+  },
+  "fonts": {
+    "heading": "arabic-display",
+    "body": "arabic"
+  },
+  "colors": {
+    "primary": "#a8884a",
+    "accent": "#a8884a",
+    "background": "#0f0a04",
+    "text": "#2a1f14"
+  },
+  "sections": []
+}

@@ -2,15 +2,23 @@
 // diamant central pulsant et lueur cinématographique.
 import { motion } from "framer-motion";
 
-export function LuxuryDivider({ variant = 0 }: { variant?: number }) {
+export function LuxuryDivider({ variant = 0, instant = false }: { variant?: number; instant?: boolean }) {
   const v = variant % 4;
+  const enter = instant
+    ? { initial: false as const, animate: { opacity: 1 } }
+    : { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true, margin: "-40px" } };
+  const lineEnter = instant
+    ? { initial: false as const, animate: { scaleX: 1 } }
+    : { initial: { scaleX: 0 }, whileInView: { scaleX: 1 }, viewport: { once: true, margin: "-40px" } };
+  const ornamentEnter = instant
+    ? { initial: false as const, animate: { opacity: 1, scale: 1, rotate: 0 } }
+    : { initial: { opacity: 0, scale: 0.4, rotate: -180 }, whileInView: { opacity: 1, scale: 1, rotate: 0 },
+        viewport: { once: true, margin: "-40px" } };
   return (
     <div className="relative my-10 md:my-14 flex items-center justify-center select-none">
       <motion.div
         aria-hidden
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-40px" }}
+        {...enter}
         transition={{ duration: 1 }}
         className="absolute inset-x-0 h-24 -z-10 blur-2xl"
         style={{
@@ -21,9 +29,7 @@ export function LuxuryDivider({ variant = 0 }: { variant?: number }) {
 
       {/* Left line */}
       <motion.span
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, margin: "-40px" }}
+        {...lineEnter}
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
         className="h-px flex-1 max-w-[36%] origin-right"
         style={{
@@ -34,10 +40,8 @@ export function LuxuryDivider({ variant = 0 }: { variant?: number }) {
 
       {/* Ornament */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.4, rotate: -180 }}
-        whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        {...ornamentEnter}
+        transition={{ duration: instant ? 0 : 1.2, delay: instant ? 0 : 0.4, ease: [0.16, 1, 0.3, 1] }}
         className="mx-4 md:mx-6 relative"
       >
         <motion.div
@@ -52,9 +56,7 @@ export function LuxuryDivider({ variant = 0 }: { variant?: number }) {
 
       {/* Right line */}
       <motion.span
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, margin: "-40px" }}
+        {...lineEnter}
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
         className="h-px flex-1 max-w-[36%] origin-left"
         style={{

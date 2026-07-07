@@ -1,43 +1,40 @@
 // Ouverture cinématographique 3D : scène R3F, carte qui arrive de la profondeur
-// avec caméra travelling, lumière volumétrique et particules dorées.
+// avec caméra travelling, lumière volumétrique et particules thématiques.
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, Float, Sparkles, MeshTransmissionMaterial, PerspectiveCamera } from "@react-three/drei";
 import { AnimatePresence, motion } from "framer-motion";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { gsap } from "gsap";
 import type { ThemeConfig } from "@/lib/themes";
-import { t, type Lang } from "@/lib/i18n";
+import type { OpenerConfig, OpenerPalette } from "@/lib/opener-config";
+import { t, isRTL, type Lang } from "@/lib/i18n";
+import { useOpenerState } from "./openers/useOpenerState";
 
-export function Cinematic3DOpener({
+export function LuxuryOpener({
+  config,
   theme,
   title,
   hosts,
   lang = "fr",
   storageKey,
+  onReady,
 }: {
+  config: OpenerConfig;
   theme: ThemeConfig;
   title: string;
   hosts?: string;
   lang?: Lang;
   storageKey: string;
+  onReady?: () => void;
 }) {
-  const [visible, setVisible] = useState(false);
-  const [opened, setOpened] = useState(false);
+  const { visible, opened, open } = useOpenerState(storageKey);
+  const { palette } = config;
+  const rtl = isRTL(lang);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      if (!sessionStorage.getItem(storageKey)) setVisible(true);
-    } catch {
-      setVisible(true);
-    }
-  }, [storageKey]);
-
-  function open() {
-    setOpened(true);
-    try { sessionStorage.setItem(storageKey, "1"); } catch { /* ignore */ }
-    window.setTimeout(() => setVisible(false), 2400);
+  function handleOpen() {
+    open(config.durationMs);
+    window.setTimeout(() => onReady?.(), config.durationMs);
   }
 
   return (
@@ -46,23 +43,22 @@ export function Cinematic3DOpener({
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }}
-          className="fixed inset-0 z-[100] overflow-hidden bg-black"
+          className="fixed inset-0 z-[100] overflow-hidden"
+          style={{ background: palette.bgGradient }}
         >
           <Canvas dpr={[1, 2]} gl={{ antialias: true, alpha: false }} className="!absolute inset-0">
-            <color attach="background" args={["#050303"]} />
-            <fog attach="fog" args={["#050303", 8, 22]} />
+            <color attach="background" args={[palette.bg]} />
+            <fog attach="fog" args={[palette.bg, 8, 22]} />
             <Suspense fallback={null}>
-              <Scene opened={opened} title={title} hosts={hosts} />
+              <Scene opened={opened} title={title} hosts={hosts} lang={lang} palette={palette} />
               <Environment preset="night" />
             </Suspense>
           </Canvas>
 
-          {/* Vignette + light beam overlay */}
           <div
             className="pointer-events-none absolute inset-0"
             style={{
-              background:
-                "radial-gradient(60% 40% at 50% 30%, rgba(212,175,55,0.20), transparent 70%), radial-gradient(120% 80% at 50% 100%, rgba(0,0,0,0.85), transparent 60%)",
+              background: `radial-gradient(60% 40% at 50% 30%, ${palette.glow}33, transparent 70%), ${palette.vignette}`,
             }}
           />
 
@@ -70,16 +66,16 @@ export function Cinematic3DOpener({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: opened ? 0 : 1, y: opened ? 20 : 0 }}
             transition={{ duration: 0.8, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-x-0 bottom-[12%] flex flex-col items-center gap-4 z-10"
+            className={`absolute inset-x-0 bottom-[12%] flex flex-col items-center gap-4 z-10 ${rtl ? "font-arabic" : ""}`}
           >
-            <p className="text-[10px] uppercase tracking-[0.5em] text-white/60">
-              {t(lang, "youAreInvited") || "You are invited"}
+            <p className={`${rtl ? "text-sm tracking-normal normal-case" : "text-[10px] uppercase tracking-[0.5em]"} text-white/60`}>
+              {t(lang, "youAreInvited")}
             </p>
             <button
-              onClick={open}
-              className={`group relative px-10 py-4 rounded-full text-sm font-medium tracking-[0.15em] uppercase overflow-hidden ${theme.ctaClass}`}
+              onClick={handleOpen}
+              className={`group relative px-10 py-4 rounded-full text-sm font-medium overflow-hidden ${theme.ctaClass} ${rtl ? "tracking-normal normal-case" : "tracking-[0.15em] uppercase"}`}
             >
-              <span className="relative z-10">{t(lang, "open") || "Open"}</span>
+              <span className="relative z-10">{t(lang, "open")}</span>
               <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
             </button>
           </motion.div>
@@ -89,7 +85,10 @@ export function Cinematic3DOpener({
   );
 }
 
-function Scene({ opened, title, hosts }: { opened: boolean; title: string; hosts?: string }) {
+/** @deprecated Utiliser LuxuryOpener via ThemeInvitationOpener */
+export const Cinematic3DOpener = LuxuryOpener;
+
+function Scene({ opened, title, hosts, lang, palette }: { opened: boolean; title: string; hosts?: string; lang: Lang; palette: OpenerPalette }) {
   const camRef = useRef<THREE.PerspectiveCamera>(null);
   const cardRef = useRef<THREE.Group>(null);
   const spotRef = useRef<THREE.SpotLight>(null);
@@ -154,28 +153,28 @@ function Scene({ opened, title, hosts }: { opened: boolean; title: string; hosts
         angle={0.4}
         penumbra={0.9}
         intensity={40}
-        color="#f5d68a"
+        color={palette.glow}
         castShadow
       />
-      <pointLight position={[-4, -2, 3]} intensity={4} color="#7aa8ff" />
+      <pointLight position={[-4, -2, 3]} intensity={4} color={palette.accent} />
       <primitive object={targetRef.current} position={[0, 0, 0]} />
 
       <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.4}>
         <group ref={cardRef}>
-          <InvitationCard title={title} hosts={hosts} />
+          <InvitationCard title={title} hosts={hosts} lang={lang} palette={palette} />
         </group>
       </Float>
 
-      <Sparkles count={80} scale={[8, 5, 4]} size={2.5} speed={0.35} color="#f5d68a" opacity={0.9} />
-      <Sparkles count={40} scale={[10, 6, 6]} size={1.2} speed={0.2} color="#ffffff" opacity={0.5} />
+      <Sparkles count={80} scale={[8, 5, 4]} size={2.5} speed={0.35} color={palette.primary} opacity={0.9} />
+      <Sparkles count={40} scale={[10, 6, 6]} size={1.2} speed={0.2} color={palette.secondary} opacity={0.5} />
     </>
   );
 }
 
-function InvitationCard({ title, hosts }: { title: string; hosts?: string }) {
+function InvitationCard({ title, hosts, lang, palette }: { title: string; hosts?: string; lang: Lang; palette: OpenerPalette }) {
+  const texture = useCardTexture(title, hosts, lang, palette);
   return (
     <group>
-      {/* Card body (glass / transmission) */}
       <mesh castShadow receiveShadow>
         <boxGeometry args={[2.4, 3.4, 0.06]} />
         <MeshTransmissionMaterial
@@ -185,76 +184,80 @@ function InvitationCard({ title, hosts }: { title: string; hosts?: string }) {
           ior={1.3}
           chromaticAberration={0.04}
           backside
-          color="#f8ecc8"
-          attenuationColor="#d4af37"
+          color={palette.secondary}
+          attenuationColor={palette.primary}
           attenuationDistance={1.2}
         />
       </mesh>
 
-      {/* Gold frame */}
       <mesh position={[0, 0, 0.032]}>
         <ringGeometry args={[1.55, 1.62, 64]} />
-        <meshStandardMaterial color="#d4af37" metalness={1} roughness={0.2} emissive="#d4af37" emissiveIntensity={0.15} />
+        <meshStandardMaterial color={palette.primary} metalness={1} roughness={0.2} emissive={palette.primary} emissiveIntensity={0.15} />
       </mesh>
 
-      {/* Inner border rectangle */}
       <lineSegments position={[0, 0, 0.034]}>
         <edgesGeometry args={[new THREE.PlaneGeometry(2.1, 3.1)]} />
-        <lineBasicMaterial color="#d4af37" transparent opacity={0.6} />
+        <lineBasicMaterial color={palette.primary} transparent opacity={0.6} />
       </lineSegments>
 
-      {/* Text on card via canvas texture */}
       <mesh position={[0, 0, 0.035]}>
         <planeGeometry args={[2.1, 3.1]} />
-        <meshBasicMaterial map={useCardTexture(title, hosts)} transparent />
+        <meshBasicMaterial map={texture} transparent />
       </mesh>
     </group>
   );
 }
 
-function useCardTexture(title: string, hosts?: string) {
-  const tex = useRef<THREE.CanvasTexture | null>(null);
-  if (!tex.current) {
+function useCardTexture(title: string, hosts: string | undefined, lang: Lang, palette: OpenerPalette) {
+  return useMemo(() => {
+    const rtl = isRTL(lang);
     const canvas = document.createElement("canvas");
     canvas.width = 512;
     canvas.height = 768;
     const ctx = canvas.getContext("2d")!;
     ctx.clearRect(0, 0, 512, 768);
+    ctx.direction = rtl ? "rtl" : "ltr";
+    ctx.textAlign = "center";
 
     // Eyebrow
-    ctx.fillStyle = "#a8884a";
-    ctx.font = "500 18px 'Georgia', serif";
-    ctx.textAlign = "center";
-    ctx.letterSpacing = "6px";
-    ctx.fillText("YOU ARE INVITED", 256, 200);
+    ctx.fillStyle = palette.primary;
+    ctx.font = rtl
+      ? "600 22px 'Cairo', 'Amiri', 'Noto Kufi Arabic', sans-serif"
+      : "500 18px 'Georgia', serif";
+    if (!rtl) ctx.letterSpacing = "6px";
+    ctx.fillText(t(lang, "youAreInvited"), 256, 200);
 
     // Divider
-    ctx.strokeStyle = "#a8884a";
+    ctx.strokeStyle = palette.primary;
     ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.moveTo(216, 230); ctx.lineTo(296, 230); ctx.stroke();
 
     // Title (wrap)
-    ctx.fillStyle = "#2a1f14";
-    ctx.font = "italic 48px 'Georgia', serif";
-    wrapText(ctx, title, 256, 340, 420, 56);
+    ctx.fillStyle = palette.cardText;
+    ctx.font = rtl
+      ? "700 42px 'Amiri', 'Scheherazade New', 'Cairo', serif"
+      : "italic 48px 'Georgia', serif";
+    wrapText(ctx, title, 256, 340, 420, rtl ? 52 : 56);
 
     // Hosts
     if (hosts) {
       ctx.fillStyle = "#5a4a30";
-      ctx.font = "italic 22px 'Georgia', serif";
-      wrapText(ctx, hosts, 256, 520, 400, 30);
+      ctx.font = rtl
+        ? "500 24px 'Cairo', 'Amiri', sans-serif"
+        : "italic 22px 'Georgia', serif";
+      wrapText(ctx, hosts, 256, 520, 400, rtl ? 34 : 30);
     }
 
     // Bottom ornament
-    ctx.strokeStyle = "#a8884a";
+    ctx.strokeStyle = palette.primary;
     ctx.beginPath(); ctx.moveTo(206, 620); ctx.lineTo(306, 620); ctx.stroke();
     ctx.fillStyle = "#a8884a";
     ctx.beginPath(); ctx.arc(256, 620, 3, 0, Math.PI * 2); ctx.fill();
 
-    tex.current = new THREE.CanvasTexture(canvas);
-    tex.current.anisotropy = 8;
-  }
-  return tex.current;
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.anisotropy = 8;
+    return texture;
+  }, [title, hosts, lang, palette]);
 }
 
 function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) {

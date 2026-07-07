@@ -1,14 +1,17 @@
-// Éditeur de section : un formulaire compact pour chaque type.
+// Éditeur de section : contenu, style visuel, listes réordonnables.
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { Section } from "@/lib/sections";
-
+import { SectionStyleEditor } from "@/components/editor/SectionStyleEditor";
+import { SortableListEditor } from "@/components/editor/SortableListEditor";
 type Props = {
   section: Section;
   onChange: (s: Section) => void;
+  dir?: "ltr" | "rtl";
 };
 
-export function SectionEditor({ section, onChange }: Props) {
+export function SectionEditor({ section, onChange, dir = "ltr" }: Props) {
+  const body = (() => {
   switch (section.kind) {
     case "hero":       return <HeroEditor s={section} onChange={onChange} />;
     case "event":      return <EventEditor s={section} onChange={onChange} />;
@@ -22,9 +25,27 @@ export function SectionEditor({ section, onChange }: Props) {
     case "countdown":  return <CountdownEditor s={section} onChange={onChange} />;
     case "contact":    return <ContactEditor s={section} onChange={onChange} />;
     case "faq":        return <FaqEditor s={section} onChange={onChange} />;
-  }
-}
+    }
+  })();
 
+  return (
+    <div dir={dir} className={`space-y-4 ${dir === "rtl" ? "font-arabic" : ""}`}>
+      <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+        <input
+          type="checkbox"
+          checked={!!section.hidden}
+          onChange={(e) => onChange({ ...section, hidden: e.target.checked || undefined })}
+        />
+        Masquer cette section (visible uniquement dans l'éditeur)
+      </label>
+      <SectionStyleEditor
+        style={section.style}
+        onChange={(style) => onChange({ ...section, style })}
+      />
+      {body}
+    </div>
+  );
+}
 /* ---------- shared UI ---------- */
 const input = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent/40 transition";
 const label = "block text-[10px] uppercase tracking-widest text-muted-foreground mb-1.5";
@@ -79,32 +100,29 @@ function EventEditor({ s, onChange }: { s: Extract<Section, { kind: "event" }>; 
 
 /* ---------- TIMELINE ---------- */
 function TimelineEditor({ s, onChange }: { s: Extract<Section, { kind: "timeline" }>; onChange: (s: Section) => void }) {
-  const updateItem = (i: number, patch: Partial<(typeof s.items)[number]>) => {
-    const items = s.items.map((it, idx) => (idx === i ? { ...it, ...patch } : it));
-    onChange({ ...s, items });
-  };
   return (
     <div className="space-y-3">
       <Field label="Titre"><input className={input} value={s.title ?? ""} onChange={(e) => onChange({ ...s, title: e.target.value })} /></Field>
-      <div className="space-y-2">
-        {s.items.map((it, i) => (
-          <div key={i} className="grid grid-cols-12 gap-2 items-start rounded-lg border border-border p-2">
-            <input className={`${input} col-span-3`} placeholder="15:00" value={it.time} onChange={(e) => updateItem(i, { time: e.target.value })} />
-            <input className={`${input} col-span-4`} placeholder="Étape" value={it.label} onChange={(e) => updateItem(i, { label: e.target.value })} />
-            <input className={`${input} col-span-4`} placeholder="Description" value={it.description ?? ""} onChange={(e) => updateItem(i, { description: e.target.value })} />
+      <SortableListEditor
+        items={s.items}
+        onChange={(items) => onChange({ ...s, items })}
+        getId={(_, i) => `tl-${s.id}-${i}`}
+        onAdd={() => onChange({ ...s, items: [...s.items, { time: "", label: "", description: "" }] })}
+        addLabel="Ajouter une étape"
+        renderItem={(it, i, update) => (
+          <div className="grid grid-cols-12 gap-2 items-start rounded-lg border border-border p-2">
+            <input className={`${input} col-span-3`} placeholder="15:00" value={it.time} onChange={(e) => update({ time: e.target.value })} />
+            <input className={`${input} col-span-4`} placeholder="Étape" value={it.label} onChange={(e) => update({ label: e.target.value })} />
+            <input className={`${input} col-span-4`} placeholder="Description" value={it.description ?? ""} onChange={(e) => update({ description: e.target.value })} />
             <div className="col-span-1 flex justify-end">
               <MiniBtn danger onClick={() => onChange({ ...s, items: s.items.filter((_, idx) => idx !== i) })}><Trash2 className="size-3" /></MiniBtn>
             </div>
           </div>
-        ))}
-      </div>
-      <MiniBtn onClick={() => onChange({ ...s, items: [...s.items, { time: "", label: "", description: "" }] })}>
-        <Plus className="size-3" /> Ajouter une étape
-      </MiniBtn>
+        )}
+      />
     </div>
   );
 }
-
 /* ---------- CARD ---------- */
 function CardEditor({ s, onChange }: { s: Extract<Section, { kind: "card" }>; onChange: (s: Section) => void }) {
   return (
@@ -128,22 +146,31 @@ function GalleryEditor({ s, onChange }: { s: Extract<Section, { kind: "gallery" 
         </MiniBtn>
       </div>
       {!!s.images.length && (
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
-          {s.images.map((src, i) => (
-            <div key={i} className="relative aspect-square overflow-hidden rounded-lg border border-border">
-              <img src={src} alt="" className="w-full h-full object-cover" />
-              <button type="button" onClick={() => onChange({ ...s, images: s.images.filter((_, idx) => idx !== i) })}
-                className="absolute top-1 right-1 rounded-md bg-black/60 text-white p-1">
-                <Trash2 className="size-3" />
-              </button>
+        <SortableListEditor
+          items={s.images}
+          onChange={(images) => onChange({ ...s, images })}
+          getId={(src, i) => `img-${s.id}-${i}-${src.slice(-8)}`}
+          onAdd={() => { if (draft) { onChange({ ...s, images: [...s.images, draft] }); setDraft(""); } }}
+          addLabel=""
+          showAddButton={false}
+          renderItem={(src, i) => (
+            <div className="flex gap-2 items-center rounded-lg border border-border p-2">
+              <div className="size-12 shrink-0 overflow-hidden rounded-md border border-border">
+                <img src={src} alt="" className="w-full h-full object-cover" />
+              </div>
+              <input className={input} value={src} onChange={(e) => {
+                const images = [...s.images];
+                images[i] = e.target.value;
+                onChange({ ...s, images });
+              }} />
+              <MiniBtn danger onClick={() => onChange({ ...s, images: s.images.filter((_, idx) => idx !== i) })}><Trash2 className="size-3" /></MiniBtn>
             </div>
-          ))}
-        </div>
+          )}
+        />
       )}
     </div>
   );
 }
-
 /* ---------- IMAGE + TEXT ---------- */
 function ImageTextEditor({ s, onChange }: { s: Extract<Section, { kind: "image-text" }>; onChange: (s: Section) => void }) {
   return (
@@ -172,30 +199,28 @@ function MapEditor({ s, onChange }: { s: Extract<Section, { kind: "map" }>; onCh
 
 /* ---------- PROGRAM ---------- */
 function ProgramEditor({ s, onChange }: { s: Extract<Section, { kind: "program" }>; onChange: (s: Section) => void }) {
-  const updateItem = (i: number, patch: Partial<(typeof s.items)[number]>) => {
-    onChange({ ...s, items: s.items.map((it, idx) => (idx === i ? { ...it, ...patch } : it)) });
-  };
   return (
     <div className="space-y-3">
       <Field label="Titre"><input className={input} value={s.title ?? ""} onChange={(e) => onChange({ ...s, title: e.target.value })} /></Field>
-      <div className="space-y-2">
-        {s.items.map((it, i) => (
-          <div key={i} className="grid grid-cols-12 gap-2 items-center">
-            <input className={`${input} col-span-3`} placeholder="16:00" value={it.time} onChange={(e) => updateItem(i, { time: e.target.value })} />
-            <input className={`${input} col-span-8`} placeholder="Libellé" value={it.label} onChange={(e) => updateItem(i, { label: e.target.value })} />
+      <SortableListEditor
+        items={s.items}
+        onChange={(items) => onChange({ ...s, items })}
+        getId={(_, i) => `pg-${s.id}-${i}`}
+        onAdd={() => onChange({ ...s, items: [...s.items, { time: "", label: "" }] })}
+        addLabel="Ajouter"
+        renderItem={(it, i, update) => (
+          <div className="grid grid-cols-12 gap-2 items-center rounded-lg border border-border p-2">
+            <input className={`${input} col-span-3`} placeholder="16:00" value={it.time} onChange={(e) => update({ time: e.target.value })} />
+            <input className={`${input} col-span-8`} placeholder="Libellé" value={it.label} onChange={(e) => update({ label: e.target.value })} />
             <div className="col-span-1 flex justify-end">
               <MiniBtn danger onClick={() => onChange({ ...s, items: s.items.filter((_, idx) => idx !== i) })}><Trash2 className="size-3" /></MiniBtn>
             </div>
           </div>
-        ))}
-      </div>
-      <MiniBtn onClick={() => onChange({ ...s, items: [...s.items, { time: "", label: "" }] })}>
-        <Plus className="size-3" /> Ajouter
-      </MiniBtn>
+        )}
+      />
     </div>
   );
 }
-
 /* ---------- QUOTE ---------- */
 function QuoteEditor({ s, onChange }: { s: Extract<Section, { kind: "quote" }>; onChange: (s: Section) => void }) {
   return (
@@ -222,18 +247,20 @@ function CountdownEditor({ s, onChange }: { s: Extract<Section, { kind: "countdo
 
 /* ---------- CONTACT ---------- */
 function ContactEditor({ s, onChange }: { s: Extract<Section, { kind: "contact" }>; onChange: (s: Section) => void }) {
-  const updateItem = (i: number, patch: Partial<(typeof s.items)[number]>) => {
-    onChange({ ...s, items: s.items.map((it, idx) => (idx === i ? { ...it, ...patch } : it)) });
-  };
   return (
     <div className="space-y-3">
       <Field label="Titre"><input className={input} value={s.title ?? ""} onChange={(e) => onChange({ ...s, title: e.target.value })} /></Field>
-      <div className="space-y-2">
-        {s.items.map((it, i) => (
-          <div key={i} className="grid grid-cols-12 gap-2">
-            <input className={`${input} col-span-3`} placeholder="Libellé" value={it.label} onChange={(e) => updateItem(i, { label: e.target.value })} />
-            <input className={`${input} col-span-5`} placeholder="Valeur" value={it.value} onChange={(e) => updateItem(i, { value: e.target.value })} />
-            <select className={`${input} col-span-3`} value={it.type ?? "link"} onChange={(e) => updateItem(i, { type: e.target.value as "phone" | "email" | "link" })}>
+      <SortableListEditor
+        items={s.items}
+        onChange={(items) => onChange({ ...s, items })}
+        getId={(_, i) => `ct-${s.id}-${i}`}
+        onAdd={() => onChange({ ...s, items: [...s.items, { label: "", value: "", type: "link" }] })}
+        addLabel="Ajouter"
+        renderItem={(it, i, update) => (
+          <div className="grid grid-cols-12 gap-2 rounded-lg border border-border p-2">
+            <input className={`${input} col-span-3`} placeholder="Libellé" value={it.label} onChange={(e) => update({ label: e.target.value })} />
+            <input className={`${input} col-span-5`} placeholder="Valeur" value={it.value} onChange={(e) => update({ value: e.target.value })} />
+            <select className={`${input} col-span-3`} value={it.type ?? "link"} onChange={(e) => update({ type: e.target.value as "phone" | "email" | "link" })}>
               <option value="phone">Téléphone</option>
               <option value="email">Email</option>
               <option value="link">Lien</option>
@@ -242,41 +269,35 @@ function ContactEditor({ s, onChange }: { s: Extract<Section, { kind: "contact" 
               <MiniBtn danger onClick={() => onChange({ ...s, items: s.items.filter((_, idx) => idx !== i) })}><Trash2 className="size-3" /></MiniBtn>
             </div>
           </div>
-        ))}
-      </div>
-      <MiniBtn onClick={() => onChange({ ...s, items: [...s.items, { label: "", value: "", type: "link" }] })}>
-        <Plus className="size-3" /> Ajouter
-      </MiniBtn>
+        )}
+      />
     </div>
   );
 }
-
 /* ---------- FAQ ---------- */
 function FaqEditor({ s, onChange }: { s: Extract<Section, { kind: "faq" }>; onChange: (s: Section) => void }) {
-  const updateItem = (i: number, patch: Partial<(typeof s.items)[number]>) => {
-    onChange({ ...s, items: s.items.map((it, idx) => (idx === i ? { ...it, ...patch } : it)) });
-  };
   return (
     <div className="space-y-3">
       <Field label="Titre"><input className={input} value={s.title ?? ""} onChange={(e) => onChange({ ...s, title: e.target.value })} /></Field>
-      <div className="space-y-2">
-        {s.items.map((it, i) => (
-          <div key={i} className="space-y-2 rounded-lg border border-border p-2">
+      <SortableListEditor
+        items={s.items}
+        onChange={(items) => onChange({ ...s, items })}
+        getId={(_, i) => `faq-${s.id}-${i}`}
+        onAdd={() => onChange({ ...s, items: [...s.items, { q: "", a: "" }] })}
+        addLabel="Ajouter"
+        renderItem={(it, i, update) => (
+          <div className="space-y-2 rounded-lg border border-border p-2">
             <div className="flex gap-2">
-              <input className={input} placeholder="Question" value={it.q} onChange={(e) => updateItem(i, { q: e.target.value })} />
+              <input className={input} placeholder="Question" value={it.q} onChange={(e) => update({ q: e.target.value })} />
               <MiniBtn danger onClick={() => onChange({ ...s, items: s.items.filter((_, idx) => idx !== i) })}><Trash2 className="size-3" /></MiniBtn>
             </div>
-            <textarea rows={2} className={input} placeholder="Réponse" value={it.a} onChange={(e) => updateItem(i, { a: e.target.value })} />
+            <textarea rows={2} className={input} placeholder="Réponse" value={it.a} onChange={(e) => update({ a: e.target.value })} />
           </div>
-        ))}
-      </div>
-      <MiniBtn onClick={() => onChange({ ...s, items: [...s.items, { q: "", a: "" }] })}>
-        <Plus className="size-3" /> Ajouter
-      </MiniBtn>
+        )}
+      />
     </div>
   );
 }
-
 function toLocalInput(iso?: string) {
   if (!iso) return "";
   try {

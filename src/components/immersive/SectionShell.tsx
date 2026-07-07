@@ -45,11 +45,17 @@ export function SectionShell({
   depth = 1,
   index = 0,
   themeDecor = "none",
+  preview = false,
+  variantOverride,
 }: {
   children: ReactNode;
   depth?: number;
   index?: number;
   themeDecor?: string;
+  /** Désactive les animations scroll-linked (aperçu éditeur / modale). */
+  preview?: boolean;
+  /** Force une variante de transition (choix utilisateur). */
+  variantOverride?: Variant;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
@@ -57,7 +63,7 @@ export function SectionShell({
   const smooth = useSpring(scrollYProgress, { stiffness: 90, damping: 24, mass: 0.4 });
 
   const set = THEME_VARIANTS[themeDecor] ?? THEME_VARIANTS.none;
-  const variant = set[index % set.length];
+  const variant = variantOverride ?? set[index % set.length];
 
   const { motionStyle, glowOpacity, curtainScale, sceneWipe } = useVariantStyle(
     variant,
@@ -65,7 +71,7 @@ export function SectionShell({
     depth,
   );
 
-  if (reduced) return <div ref={ref}>{children}</div>;
+  if (reduced || preview) return <div ref={ref}>{children}</div>;
 
   return (
     <div

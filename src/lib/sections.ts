@@ -3,6 +3,9 @@ import {
   Calendar, Clock, MapPin, Image as ImageIcon, Quote as QuoteIcon, ListChecks,
   Phone, HelpCircle, Layout, Type, Map as MapIcon, Hourglass,
 } from "lucide-react";
+import type { SectionStyle } from "@/lib/section-style";
+
+export type StyledSection = { style?: SectionStyle; hidden?: boolean };
 
 export type SectionKind =
   | "hero"
@@ -18,18 +21,18 @@ export type SectionKind =
   | "contact"
   | "faq";
 
-export type HeroSection      = { id: string; kind: "hero"; eyebrow?: string; title: string; subtitle?: string; date?: string; location?: string; imageUrl?: string };
-export type EventSection     = { id: string; kind: "event"; icon?: string; title: string; date?: string; time?: string; location?: string; description?: string };
-export type TimelineSection  = { id: string; kind: "timeline"; title?: string; items: { time: string; label: string; description?: string }[] };
-export type CardSection      = { id: string; kind: "card"; title: string; body: string };
-export type GallerySection   = { id: string; kind: "gallery"; title?: string; images: string[] };
-export type ImageTextSection = { id: string; kind: "image-text"; title: string; body: string; imageUrl: string; reverse?: boolean };
-export type MapSection       = { id: string; kind: "map"; title?: string; address: string; embedUrl?: string };
-export type ProgramSection   = { id: string; kind: "program"; title?: string; items: { time: string; label: string }[] };
-export type QuoteSection     = { id: string; kind: "quote"; text: string; author?: string };
-export type CountdownSection = { id: string; kind: "countdown"; targetDate: string; label?: string };
-export type ContactSection   = { id: string; kind: "contact"; title?: string; items: { label: string; value: string; type?: "phone" | "email" | "link" }[] };
-export type FaqSection       = { id: string; kind: "faq"; title?: string; items: { q: string; a: string }[] };
+export type HeroSection      = StyledSection & { id: string; kind: "hero"; eyebrow?: string; title: string; subtitle?: string; date?: string; location?: string; imageUrl?: string };
+export type EventSection     = StyledSection & { id: string; kind: "event"; icon?: string; title: string; date?: string; time?: string; location?: string; description?: string };
+export type TimelineSection  = StyledSection & { id: string; kind: "timeline"; title?: string; items: { time: string; label: string; description?: string }[] };
+export type CardSection      = StyledSection & { id: string; kind: "card"; title: string; body: string };
+export type GallerySection   = StyledSection & { id: string; kind: "gallery"; title?: string; images: string[] };
+export type ImageTextSection = StyledSection & { id: string; kind: "image-text"; title: string; body: string; imageUrl: string; reverse?: boolean };
+export type MapSection       = StyledSection & { id: string; kind: "map"; title?: string; address: string; embedUrl?: string };
+export type ProgramSection   = StyledSection & { id: string; kind: "program"; title?: string; items: { time: string; label: string }[] };
+export type QuoteSection     = StyledSection & { id: string; kind: "quote"; text: string; author?: string };
+export type CountdownSection = StyledSection & { id: string; kind: "countdown"; targetDate: string; label?: string };
+export type ContactSection   = StyledSection & { id: string; kind: "contact"; title?: string; items: { label: string; value: string; type?: "phone" | "email" | "link" }[] };
+export type FaqSection       = StyledSection & { id: string; kind: "faq"; title?: string; items: { q: string; a: string }[] };
 
 export type Section =
   | HeroSection | EventSection | TimelineSection | CardSection | GallerySection
