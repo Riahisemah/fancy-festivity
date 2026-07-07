@@ -15,6 +15,7 @@ import {
 } from "@/lib/animations";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { MUSIC_PRESETS } from "@/lib/animations";
 import { OpenerPreviewModal } from "./OpenerPreviewModal";
 
 const INTENSITY_LABEL = { soft: "Doux", medium: "Modéré", intense: "Intense" } as const;
@@ -168,6 +169,73 @@ export function AnimationEditorPanel({ settings, onChange, themeKey, theme, titl
             </div>
           )}
         </div>
+      </div>
+
+      {/* Expérience invité */}
+      <div className="rounded-2xl border border-border bg-card p-4 space-y-4">
+        <div>
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Expérience invité</div>
+          <h3 className="font-serif text-lg mt-0.5">Musique, story & accueil</h3>
+        </div>
+
+        <ToggleRow
+          label="Musique de fond"
+          checked={settings.music?.enabled ?? false}
+          onCheckedChange={(enabled) =>
+            onChange({
+              ...settings,
+              music: {
+                enabled,
+                preset: settings.music?.preset ?? "romantic",
+              },
+            })
+          }
+        />
+
+        {(settings.music?.enabled ?? false) && (
+          <div className="flex flex-wrap gap-1.5">
+            {MUSIC_PRESETS.filter((p) => p.id !== "none").map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() =>
+                  onChange({
+                    ...settings,
+                    music: { enabled: true, preset: p.id },
+                  })
+                }
+                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] transition ${
+                  settings.music?.preset === p.id
+                    ? "border-accent bg-accent/10"
+                    : "border-border hover:bg-muted"
+                }`}
+              >
+                <span>{p.emoji}</span>
+                <span>{p.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div>
+          <label className="text-[11px] text-muted-foreground">Message d&apos;accueil (3 s)</label>
+          <input
+            type="text"
+            value={settings.welcomeMessage ?? ""}
+            onChange={(e) => onChange({ ...settings, welcomeMessage: e.target.value || undefined })}
+            placeholder="Ex : Bienvenue…"
+            className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-accent/30"
+          />
+        </div>
+
+        <ToggleRow
+          label="Mode Story (mobile)"
+          checked={settings.storyMode ?? false}
+          onCheckedChange={(storyMode) => onChange({ ...settings, storyMode })}
+        />
+        <p className="text-[11px] text-muted-foreground -mt-2">
+          Les sections défilent comme des stories Instagram sur téléphone.
+        </p>
       </div>
 
       <OpenerPreviewModal

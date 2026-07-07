@@ -48,6 +48,12 @@ export type InvitationAnimationSettings = {
   openerId: OpenerAnimationId;
   sectionTransitionId: SectionTransitionId;
   params: AnimationParams;
+  /** Musique de fond optionnelle */
+  music?: { enabled: boolean; preset: "romantic" | "oriental" | "tunisian" | "classic" | "modern" | "none" };
+  /** Mode story plein écran (mobile) */
+  storyMode?: boolean;
+  /** Message d'accueil avant l'opener (ex: "Bienvenue...") */
+  welcomeMessage?: string;
 };
 
 export type OpenerAnimationMeta = {

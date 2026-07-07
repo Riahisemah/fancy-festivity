@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/lib/auth-context";
 import { ClientToaster } from "@/components/ClientToaster";
+import { PwaRegister } from "@/components/PwaRegister";
 
 function NotFoundComponent() {
   return (
@@ -79,6 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { name: "theme-color", content: "#1a1814" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: "Vélon" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
@@ -115,6 +120,7 @@ function RootComponent() {
       <AuthProvider>
         <Outlet />
         <ClientToaster />
+        <PwaRegister />
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -55,6 +55,13 @@ export function parseAnimationSettings(raw: unknown): InvitationAnimationSetting
   const o = raw as Partial<InvitationAnimationSettings>;
   const validOpeners = OPENER_ANIMATIONS.map((a) => a.id);
   const validTransitions = SECTION_TRANSITIONS.map((t) => t.id);
+  const musicPresets = ["romantic", "oriental", "tunisian", "classic", "modern", "none"] as const;
+  const music = o.music && typeof o.music === "object"
+    ? {
+        enabled: Boolean(o.music.enabled),
+        preset: musicPresets.includes(o.music.preset as typeof musicPresets[number]) ? o.music.preset! : "none" as const,
+      }
+    : undefined;
   return {
     openerId: validOpeners.includes(o.openerId as OpenerAnimationId) ? o.openerId! : "auto",
     sectionTransitionId: validTransitions.includes(o.sectionTransitionId as SectionTransitionId) ? o.sectionTransitionId! : "auto",
@@ -62,6 +69,9 @@ export function parseAnimationSettings(raw: unknown): InvitationAnimationSetting
       ...DEFAULT_ANIMATION_PARAMS,
       ...(typeof o.params === "object" && o.params ? o.params : {}),
     },
+    ...(music ? { music } : {}),
+    ...(typeof o.storyMode === "boolean" ? { storyMode: o.storyMode } : {}),
+    ...(typeof o.welcomeMessage === "string" ? { welcomeMessage: o.welcomeMessage } : {}),
   };
 }
 

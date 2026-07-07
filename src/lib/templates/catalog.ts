@@ -101,7 +101,20 @@ function inferLayout(t: InvitationTemplate): "full" | "minimal" | "royal" | "mod
   return "full";
 }
 
-export const TEMPLATE_CATALOG: InvitationTemplate[] = [
+import { getGeneratedCatalog } from "./catalog-generator";
+
+const HANDCRAFTED_IDS = new Set([
+  "tunisian-classic", "tunisian-classic-bilingual", "classic-arabic",
+  "tunisian-luxury-gold", "arabic-luxury", "tunisian-prestige", "premium-tunisian-bilingual",
+  "wedding-religious-ar", "wedding-religious-fr", "tunisian-modern", "modern-arabic",
+  "tunisian-minimal", "tunisian-white-gold", "tunisian-floral", "tunisian-royal",
+  "tunisian-elegant", "oriental-floral", "traditional-tunisian", "ivory-wedding",
+  "royal-palace", "golden-roses", "emerald-wedding", "engagement-classic-fr",
+  "engagement-classic-ar", "henna-traditional", "birth-classic", "circumcision-traditional",
+  "graduation-modern",
+]);
+
+const HANDCRAFTED: InvitationTemplate[] = [
   tpl({ id: "tunisian-classic", name: "Tunisian Classic", style: "Classique ivoire & or", subtheme: "tunisian-classic", copyId: "wedding-classic", tone: "classic", accent: "#a8884a", language: "fr" }),
   tpl({ id: "tunisian-classic-bilingual", name: "Tunisian Classic Bilingue", style: "Arabe + Français", subtheme: "tunisian-classic", copyId: "wedding-classic", tone: "classic", accent: "#a8884a", language: "bilingual" }),
   tpl({ id: "classic-arabic", name: "Classic Arabic", style: "Arabe classique authentique", subtheme: "tunisian-classic", copyId: "wedding-classic", tone: "classic", accent: "#a8884a", language: "ar" }),
@@ -129,7 +142,13 @@ export const TEMPLATE_CATALOG: InvitationTemplate[] = [
   tpl({ id: "henna-traditional", name: "Soirée du Henné", style: "Laylat al-henna", subtheme: "tunisian-oriental", copyId: "henna-traditional", tone: "traditional", accent: "#8b2252", category: "henna", language: "bilingual" }),
   tpl({ id: "birth-classic", name: "Naissance", style: "Accueil du nouveau-né", subtheme: "tunisian-floral", copyId: "birth-classic", tone: "classic", accent: "#6b9bd1", category: "birth", language: "bilingual" }),
   tpl({ id: "circumcision-traditional", name: "Circoncision", style: "Thtil — célébration familiale", subtheme: "tunisian-traditional", copyId: "circumcision-traditional", tone: "traditional", accent: "#2d5016", category: "circumcision", language: "ar" }),
-  tpl({ id: "graduation-modern", name: "Remise de diplôme", style: "Célébration académique", subtheme: "tunisian-modern-elegant", copyId: "graduation-modern", tone: "modern", accent: "#4a5568", category: "graduation", language: "fr" }),
+  tpl({ id: "graduation-modern", name: "Remise de diplôme", style: "Célébration académique", subtheme: "tunisian-modern-elegant", copyId: "graduation-modern", tone: "modern", accent: "#4a5568", category: "graduation", language: "fr", badge: "premium", featured: true }),
+];
+
+/** Catalogue complet : modèles artisanaux + génération automatique (140+) */
+export const TEMPLATE_CATALOG: InvitationTemplate[] = [
+  ...HANDCRAFTED.map((t) => ({ ...t, badge: t.badge ?? "premium" as const, featured: t.featured ?? true })),
+  ...getGeneratedCatalog().filter((g) => !HANDCRAFTED_IDS.has(g.id)),
 ];
 
 export function getTemplateById(id: string): InvitationTemplate | undefined {

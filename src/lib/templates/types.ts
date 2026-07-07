@@ -6,6 +6,8 @@ import type { EventCategory, InvitationTone, TemplateLanguage } from "./texts/ty
 
 export type TemplateCategory = EventCategory;
 
+export type TemplateBadge = "classic" | "premium" | "new" | "exclusive";
+
 export type TemplateColors = {
   primary: string;
   accent: string;
@@ -34,6 +36,12 @@ export type InvitationTemplate = {
   sections: TemplateSection[];
   description?: string;
   fonts?: { heading?: SectionStyle["fontFamily"]; body?: SectionStyle["fontFamily"] };
+  /** Badge commercial affiché sur la carte */
+  badge?: TemplateBadge;
+  /** Collection marketplace (ex: mariage-tunisien, ete-2026) */
+  collection?: string;
+  /** Mis en avant sur la page templates */
+  featured?: boolean;
 };
 
 /** Section without runtime id — ids assigned when cloning */

@@ -1,0 +1,20 @@
+{
+  "name": "Vélon — Invitations digitales",
+  "short_name": "Vélon",
+  "description": "Plateforme d'invitations digitales tunisiennes et arabophones",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf8f5",
+  "theme_color": "#1a1814",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "categories": ["lifestyle", "social"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

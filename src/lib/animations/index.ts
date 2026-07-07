@@ -23,3 +23,4 @@ export {
   SECTION_TRANSITION_VARIANT,
   type SectionShellVariant,
 } from "./resolve";
+export { MUSIC_PRESETS, getMusicPresetUrl, getMusicPresetLabel, type MusicPresetId } from "./music-presets";

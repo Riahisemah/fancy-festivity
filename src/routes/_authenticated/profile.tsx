@@ -7,7 +7,7 @@ import { getInvitationQuota } from "@/lib/saas/subscriptions";
 import { listInvitationsByUser } from "@/lib/invitations";
 import { isInvitationPublished } from "@/lib/saas/types";
 import { useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { COMMERCIAL_PACKS } from "@/lib/templates/marketplace";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   ssr: false,
@@ -115,6 +115,46 @@ function ProfilePage() {
               </div>
             </section>
           )}
+
+          <section className="rounded-2xl bg-card p-6 ring-1 ring-border">
+            <h2 className="font-serif text-xl mb-2">Nos offres</h2>
+            <p className="text-sm text-muted-foreground mb-6">
+              Choisissez le pack adapté à vos événements. Contactez-nous pour passer à un plan supérieur.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {Object.entries(COMMERCIAL_PACKS).map(([key, pack]) => {
+                const isCurrent = subscription?.plan?.key === key;
+                return (
+                  <div
+                    key={key}
+                    className={`rounded-xl border p-4 ${isCurrent ? "border-accent bg-accent/5 ring-1 ring-accent/30" : "border-border"}`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-serif text-lg">{pack.name}</h3>
+                      {isCurrent && (
+                        <span className="text-[10px] uppercase tracking-wider bg-accent text-accent-foreground px-2 py-0.5 rounded-full">
+                          Actuel
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {pack.invitations} invitation{typeof pack.invitations === "number" && pack.invitations > 1 ? "s" : ""}
+                      {" · "}
+                      {pack.templates} templates
+                    </p>
+                    <ul className="mt-3 space-y-1.5">
+                      {pack.features.map((f) => (
+                        <li key={f} className="text-xs text-muted-foreground flex items-start gap-1.5">
+                          <span className="text-accent mt-0.5">✓</span>
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
         </div>
       </main>
     </div>

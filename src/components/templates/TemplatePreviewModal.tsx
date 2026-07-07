@@ -21,25 +21,17 @@ import { dirFor } from "@/lib/i18n";
 
 
 export function TemplatePreviewModal({
-
   template,
-
   onClose,
-
   onUse,
-
   using,
-
+  locked,
 }: {
-
   template: InvitationTemplate | null;
-
   onClose: () => void;
-
   onUse: (t: InvitationTemplate, language: Lang) => void;
-
   using?: boolean;
-
+  locked?: boolean;
 }) {
 
   const [language, setLanguage] = useState<Lang>(template?.language ?? "fr");
@@ -183,17 +175,11 @@ export function TemplatePreviewModal({
             </button>
 
             <button
-
-              disabled={using}
-
+              disabled={using || locked}
               onClick={() => onUse(resolvedTemplate, language)}
-
               className="flex-1 rounded-full bg-primary py-3 text-sm font-medium text-primary-foreground hover:bg-accent disabled:opacity-60"
-
             >
-
-              {using ? "Création…" : "Utiliser ce modèle"}
-
+              {using ? "Création…" : locked ? "Pack Premium requis" : "Utiliser ce modèle"}
             </button>
 
           </div>

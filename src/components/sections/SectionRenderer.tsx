@@ -346,13 +346,22 @@ function ImageTextBlock({ s, t, index, lang, reveal }: { s: Extract<Section, { k
 /* ---------- MAP ---------- */
 function MapBlock({ s, t, lang, reveal }: { s: Extract<Section, { kind: "map" }>; t: ThemeConfig; lang: Lang; reveal: ReturnType<typeof motionReveal> }) {
   const embed = s.embedUrl || `https://www.google.com/maps?q=${encodeURIComponent(s.address)}&output=embed`;
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}`;
   return (
     <motion.section {...reveal} dir={isRTL(lang) ? "rtl" : "ltr"} className="my-12">
-      {s.title && <h2 className={`${arabicFont(lang, "display") || t.headingFont} text-3xl md:text-4xl text-center mb-6`}>{s.title}</h2>}
+      {s.title && <h2 className={`${arabicFont(lang, "display") || t.headingFont} text-2xl sm:text-3xl md:text-4xl text-center mb-6`}>{s.title}</h2>}
       <div className={`rounded-3xl overflow-hidden border ${t.border} shadow-2xl`}>
-        <iframe title="Carte" src={embed} className="w-full h-[360px] md:h-[440px]" loading="lazy" />
+        <iframe title="Carte" src={embed} className="w-full h-[280px] sm:h-[360px] md:h-[440px]" loading="lazy" allowFullScreen />
       </div>
-      <p className={`mt-4 text-center text-sm opacity-70 ${arabicFont(lang)}`}>{s.address}</p>
+      <p className={`mt-4 text-center text-sm opacity-70 px-4 ${arabicFont(lang)}`}>{s.address}</p>
+      {s.address && (
+        <div className="mt-4 flex justify-center">
+          <a href={mapsUrl} target="_blank" rel="noopener noreferrer"
+            className={`inline-flex items-center justify-center gap-2 rounded-full border ${t.border} min-h-11 px-6 py-2.5 text-sm font-medium hover:bg-white/10 transition touch-target`}>
+            📍 {lang === "ar" ? "فتح في خرائط Google" : "Ouvrir dans Google Maps"}
+          </a>
+        </div>
+      )}
     </motion.section>
   );
 }

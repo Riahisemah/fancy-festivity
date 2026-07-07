@@ -21,7 +21,11 @@ export type EventCategory =
   | "birth"
   | "circumcision"
   | "birthday"
-  | "graduation";
+  | "graduation"
+  | "business"
+  | "ramadan"
+  | "aid"
+  | "mouled";
 
 /** Textes structurés d'une invitation — format JSON réutilisable */
 export type InvitationCopyTexts = {

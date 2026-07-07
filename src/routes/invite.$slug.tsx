@@ -2,7 +2,7 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Share2, Copy, MessageCircle, QrCode } from "lucide-react";
+import { Share2, Copy, MessageCircle, QrCode, Facebook, Instagram } from "lucide-react";
 import { toast } from "sonner";
 import QRCode from "qrcode";
 import { resolveTheme, type ThemeKey, type ThemeConfig } from "@/lib/themes";
@@ -19,6 +19,9 @@ import { AmbientBackground } from "@/components/immersive/AmbientBackground";
 import { MagneticButton } from "@/components/immersive/MagneticButton";
 import { TunisianFrame, WaxSeal } from "@/components/immersive/TunisianOrnaments";
 import { ThemedAmbient } from "@/components/immersive/ThemedAmbient";
+import { InviteMusicPlayer } from "@/components/immersive/InviteMusicPlayer";
+import { WelcomeSplash } from "@/components/immersive/WelcomeSplash";
+import { StoryModeShell, StorySections, StorySlide, useStoryMode } from "@/components/immersive/StoryMode";
 
 export const Route = createFileRoute("/invite/$slug")({
   ssr: false,
@@ -67,6 +70,8 @@ function InvitePage() {
   const dir = dirFor(lang);
   const rtl = isRTL(lang);
   const [contentReady, setContentReady] = useState(false);
+  const [welcomeDone, setWelcomeDone] = useState(!invitation.animation_settings?.welcomeMessage);
+  const { storyMode, setStoryMode } = useStoryMode(invitation.animation_settings?.storyMode ?? false);
   const sectionTransitionVariant = (() => {
     const v = resolveSectionTransitionVariant(invitation.animation_settings);
     return v === "theme" ? undefined : v;
@@ -86,7 +91,13 @@ function InvitePage() {
 
   return (
     <SmoothScroll>
+      <WelcomeSplash
+        message={invitation.animation_settings?.welcomeMessage}
+        onDone={() => setWelcomeDone(true)}
+      />
       <div dir={dir} lang={lang === "ar" ? "ar" : lang === "en" ? "en" : "fr"} className={`relative min-h-dvh ${theme.pageBg} ${theme.pageText} ${rtl ? "font-arabic" : theme.font} overflow-x-hidden`}>
+        {welcomeDone && (
+        <>
         <ThemeInvitationOpener
           themeKey={themeKey}
           theme={theme}
@@ -103,6 +114,24 @@ function InvitePage() {
         <ParticleField color={theme.decor === "particles" || theme.decor === "arabesque" ? "#d4af37" : "#ffffff"} />
         {invitation.theme === "tunisian" && <TunisianFrame />}
 
+        <InviteMusicPlayer settings={invitation.animation_settings} />
+
+        <StoryModeShell
+          enabled={storyMode}
+          onToggle={setStoryMode}
+          storyContent={
+            <StorySections>
+              {invitation.sections.map((s, i) => (
+                <StorySlide key={s.id}>
+                  <SectionRenderer section={s} theme={theme} index={i} lang={lang} sectionTransitionVariant={sectionTransitionVariant} />
+                </StorySlide>
+              ))}
+              <StorySlide>
+                <ShareBar theme={theme} eventName={invitation.event_name} lang={lang} slug={invitation.slug} />
+              </StorySlide>
+            </StorySections>
+          }
+          scrollContent={
         <StaggeredReveal ready={contentReady} className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 md:py-12 safe-x">
           {invitation.sections.length === 0 ? (
             <div className="text-center py-20 opacity-70"><p className="text-sm">—</p></div>
@@ -115,7 +144,7 @@ function InvitePage() {
           <StaggeredSection index={invitation.sections.length} ready={contentReady}>
             <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.7 }} className="mt-16">
-              <ShareBar theme={theme} eventName={invitation.event_name} lang={lang} />
+              <ShareBar theme={theme} eventName={invitation.event_name} lang={lang} slug={invitation.slug} />
             </motion.div>
           </StaggeredSection>
 
@@ -131,12 +160,16 @@ function InvitePage() {
             <Link to="/" className="inline-block min-h-11 px-4 py-2 text-xs uppercase tracking-[0.3em] opacity-40 hover:opacity-80 transition-opacity">{t(lang, "footerBrand")}</Link>
           </footer>
         </StaggeredReveal>
+          }
+        />
+        </>
+        )}
       </div>
     </SmoothScroll>
   );
 }
 
-function ShareBar({ theme, eventName, lang }: { theme: ThemeConfig; eventName: string; lang: Lang }) {
+function ShareBar({ theme, eventName, lang, slug }: { theme: ThemeConfig; eventName: string; lang: Lang; slug: string }) {
   const [showQr, setShowQr] = useState(false);
   const [qrUrl, setQrUrl] = useState<string | null>(null);
   const url = typeof window !== "undefined" ? window.location.href : "";
@@ -149,17 +182,29 @@ function ShareBar({ theme, eventName, lang }: { theme: ThemeConfig; eventName: s
     setShowQr(true);
   }
   function copy() { navigator.clipboard.writeText(url); toast.success(t(lang, "linkCopied")); }
-  function whatsapp() { window.open(`https://wa.me/?text=${encodeURIComponent(`${eventName} — ${url}`)}`, "_blank"); }
   function nativeShare() { if (navigator.share) navigator.share({ title: eventName, url }).catch(() => {}); else copy(); }
+  function whatsapp() { window.open(`https://wa.me/?text=${encodeURIComponent(`${eventName} — ${url}`)}`, "_blank"); }
+  function facebook() { window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, "_blank"); }
+  function instagramHint() {
+    copy();
+    toast.message(lang === "ar" ? "انسخ الرابط وألصقه في ستوري إنستغرام" : "Lien copié — collez-le dans votre story Instagram");
+  }
+
+  const shortUrl = url.replace(/^https?:\/\//, "");
 
   return (
     <>
       <div className={`rounded-3xl border ${theme.border} ${theme.surface} p-4 sm:p-6`}>
         <p className={`text-center ${isRTL(lang) ? "font-arabic text-sm" : "text-xs sm:text-sm uppercase tracking-[0.2em] sm:tracking-[0.3em]"} ${theme.accent} mb-4`}>{t(lang, "share")}</p>
-        <div className="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2">
+        {shortUrl && (
+          <p className="text-center text-[11px] opacity-50 mb-3 truncate px-2" dir="ltr">{shortUrl}</p>
+        )}
+        <div className="grid grid-cols-2 sm:grid-cols-3 justify-center gap-2">
           <Btn theme={theme} onClick={nativeShare} icon={<Share2 className="size-4" />} label={t(lang, "share")} />
           <Btn theme={theme} onClick={copy} icon={<Copy className="size-4" />} label={t(lang, "copy")} />
           <Btn theme={theme} onClick={whatsapp} icon={<MessageCircle className="size-4" />} label={t(lang, "whatsapp")} />
+          <Btn theme={theme} onClick={facebook} icon={<Facebook className="size-4" />} label="Facebook" />
+          <Btn theme={theme} onClick={instagramHint} icon={<Instagram className="size-4" />} label="Instagram" />
           <Btn theme={theme} onClick={openQr} icon={<QrCode className="size-4" />} label={t(lang, "qrcode")} />
         </div>
       </div>
